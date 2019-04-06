@@ -2,14 +2,16 @@ package it.raffo.tetris.controller;
 
 import org.apache.log4j.Logger;
 
+import it.raffo.tetris.enumeration.Rotazioni;
+
 public class Matrice
 {
 
-	private static final Logger log = Logger.getLogger(Matrice.class);
-	private static Matrice      istanza;
-	private int                 altezza;
-	private int                 larghezza;
-	private int[][]             matrice;
+	private static final Logger	log	= Logger.getLogger(Matrice.class);
+	private static Matrice		istanza;
+	private int					altezza;
+	private int					larghezza;
+	private int[][]				matrice;
 
 	public static Matrice getInstance()
 	{
@@ -23,7 +25,8 @@ public class Matrice
 		return istanza;
 	}
 
-	private Matrice() {
+	private Matrice()
+	{
 		super();
 		this.matrice = null;
 	}
@@ -97,17 +100,40 @@ public class Matrice
 			for (int x = 0; x < (this.larghezza / 2); x++)
 			{
 				temp = this.matrice[x][y];
-				this.matrice[x][y] = this.matrice[(this.matrice.length - 1) - x][y];
+				this.matrice[x][y] = this.matrice[(this.larghezza - 1) - x][y];
 				this.matrice[(this.matrice.length - 1) - x][y] = temp;
 			}
 		}
 
 	}
 
-	public void rotazione()
+	public void inversioneRiga()
 	{
-		this.trasporta();
-		this.inversioneColonne();
+		int temp;
+		for (int y = 0; y < (this.altezza / 2); y++)
+		{
+			for (int x = 0; x < (this.larghezza); x++)
+			{
+				temp = this.matrice[x][y];
+				this.matrice[x][y] = this.matrice[x][(this.altezza - 1) - y];
+				this.matrice[x][(this.altezza - 1) - y] = temp;
+			}
+		}
+
+	}
+
+	public void rotazione(Rotazioni rotazione)
+	{
+		if (rotazione == Rotazioni.DX)
+		{
+			this.trasporta();
+			this.inversioneColonne();
+		}
+		else if (rotazione == Rotazioni.SX)
+		{
+			this.trasporta();
+			this.inversioneRiga();
+		}
 	}
 
 	public void setAltezza(int h)
