@@ -124,14 +124,13 @@ public class Matrice
 
 	public void rotazione(Rotazioni rotazione)
 	{
+		this.trasporta();
 		if (rotazione == Rotazioni.DX)
 		{
-			this.trasporta();
 			this.inversioneColonne();
 		}
 		else if (rotazione == Rotazioni.SX)
 		{
-			this.trasporta();
 			this.inversioneRiga();
 		}
 	}

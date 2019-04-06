@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import it.raffo.tetris.controller.Matrice;
+import it.raffo.tetris.enumeration.Rotazioni;
 import it.raffo.tetris.model.MattoncinoM1;
 import it.raffo.tetris.model.TavoloDaGioco;
 
@@ -23,6 +24,7 @@ public class Tetris
 		MattoncinoM1 M1 = new MattoncinoM1();
 
 		Matrice.getInstance().setMatrice(M1.getMatrice());
+		Matrice.getInstance().rotazione(Rotazioni.DX);
 		Matrice.getInstance().stampaMatrice();
 
 	}

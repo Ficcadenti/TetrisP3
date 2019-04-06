@@ -1,6 +1,6 @@
 package it.raffo.tetris.enumeration;
 
-public enum Mattoncini
+public enum MattonciniString
 {
 	M1("111010", 3, 2), M2("1111", 1, 0);
 
@@ -8,7 +8,7 @@ public enum Mattoncini
 	private int		larghezza;
 	private int		altezza;
 
-	private Mattoncini(String stringaMattoncino, int larghezza, int altezza)
+	private MattonciniString(String stringaMattoncino, int larghezza, int altezza)
 	{
 		this.stringaMattoncino = stringaMattoncino;
 		this.larghezza = larghezza;

@@ -2,9 +2,10 @@ package it.raffo.tetris.model;
 
 import org.apache.log4j.Logger;
 
-import it.raffo.tetris.enumeration.Mattoncini;
+import it.raffo.tetris.astratti.Mattoncino;
+import it.raffo.tetris.enumeration.MattonciniString;
 
-public class MattoncinoM1
+public class MattoncinoM1 extends Mattoncino
 {
 	private static final Logger	log	= Logger.getLogger(MattoncinoM1.class);
 
@@ -16,21 +17,10 @@ public class MattoncinoM1
 
 	public MattoncinoM1()
 	{
-		this.matrice = new int[Mattoncini.M1.getLarghezza()][Mattoncini.M1.getAltezza()];
-		this.generaMatrice(Mattoncini.M1.getStringaMattoncino(), Mattoncini.M1.getLarghezza(),
-				Mattoncini.M1.getAltezza());
-	}
-
-	private void generaMatrice(String famiglia, int dx, int dy)
-	{
-		int pos = 0;
-		for (int y = 0; y < dy; y++)
-		{
-			for (int x = 0; x < dx; x++)
-			{
-				this.matrice[x][y] = Integer.parseInt("" + famiglia.charAt(pos++));
-			}
-		}
+		this.matrice = new int[MattonciniString.M1.getLarghezza()][MattonciniString.M1.getAltezza()];
+		this.matrice = super.generaMatrice(MattonciniString.M1.getStringaMattoncino(),
+				MattonciniString.M1.getLarghezza(), MattonciniString.M1.getAltezza());
+		super.generaPosizioneIniziale();
 	}
 
 	public int getAltezza()
@@ -81,5 +71,12 @@ public class MattoncinoM1
 	public void setPosy(int posy)
 	{
 		this.posy = posy;
+	}
+
+	@Override
+	public void generaPosizioneIniziale()
+	{
+		// TODO Auto-generated method stub
+
 	}
 }
