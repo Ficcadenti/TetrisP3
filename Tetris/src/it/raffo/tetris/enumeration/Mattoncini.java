@@ -2,7 +2,7 @@ package it.raffo.tetris.enumeration;
 
 public enum Mattoncini
 {
-	M1("111010111", 3, 2), M2("1111", 1, 0);
+	M1("111010", 3, 2), M2("1111", 1, 0);
 
 	private String	stringaMattoncino;
 	private int		larghezza;

@@ -3,6 +3,8 @@ package it.raffo.tetris.game;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import it.raffo.tetris.controller.Matrice;
+import it.raffo.tetris.model.MattoncinoM1;
 import it.raffo.tetris.model.TavoloDaGioco;
 
 public class Tetris
@@ -17,6 +19,11 @@ public class Tetris
 
 		TavoloDaGioco.getInstance().generaLivello(0);
 		TavoloDaGioco.getInstance().stampaTavolo();
+
+		MattoncinoM1 M1 = new MattoncinoM1();
+
+		Matrice.getInstance().setMatrice(M1.getMatrice());
+		Matrice.getInstance().stampaMatrice();
 
 	}
 

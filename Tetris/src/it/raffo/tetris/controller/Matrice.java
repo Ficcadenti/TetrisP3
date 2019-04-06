@@ -143,6 +143,8 @@ public class Matrice
 
 	public void setMatrice(int[][] matrice)
 	{
+		this.larghezza = matrice.length;
+		this.altezza = matrice[0].length;
 		this.matrice = matrice;
 	}
 
