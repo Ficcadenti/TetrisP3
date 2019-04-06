@@ -15,15 +15,16 @@ public class Tetris
 
 	public static void main(String[] args)
 	{
+		TavoloDaGioco tetris = TavoloDaGioco.getInstance();
 		// PropertiesConfigurator is used to configure logger from properties file
 		PropertyConfigurator.configure("log4j.properties");
 
-		TavoloDaGioco.getInstance().generaLivello(0);
-		TavoloDaGioco.getInstance().stampaTavolo();
+		tetris.generaLivello(0);
 
 		MattoncinoM1 M1 = new MattoncinoM1();
 
 		Matrice.getInstance().setMatrice(M1.getMatrice());
+		Matrice.getInstance().rotazione(Rotazioni.DX);
 		Matrice.getInstance().rotazione(Rotazioni.DX);
 		Matrice.getInstance().stampaMatrice();
 

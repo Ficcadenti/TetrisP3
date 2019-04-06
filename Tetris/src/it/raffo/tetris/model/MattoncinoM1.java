@@ -21,7 +21,8 @@ public class MattoncinoM1 extends Mattoncino
 		this.matrice = new int[MattonciniString.M1.getLarghezza()][MattonciniString.M1.getAltezza()];
 		this.matrice = super.generaMatrice(MattonciniString.M1.getStringaMattoncino(),
 				MattonciniString.M1.getLarghezza(), MattonciniString.M1.getAltezza());
-		super.generaPosizioneIniziale();
+		this.posx = super.generaPosizioneIniziale().getX();
+		this.posy = super.generaPosizioneIniziale().getY();
 	}
 
 	public int getAltezza()
@@ -74,10 +75,4 @@ public class MattoncinoM1 extends Mattoncino
 		this.posy = posy;
 	}
 
-	@Override
-	public void generaPosizioneIniziale()
-	{
-		// TODO Auto-generated method stub
-
-	}
 }

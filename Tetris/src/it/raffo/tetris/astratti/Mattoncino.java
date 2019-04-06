@@ -1,10 +1,15 @@
 package it.raffo.tetris.astratti;
 
+import it.raffo.tetris.model.Posizione;
+
 public abstract class Mattoncino
 {
-	protected void generaPosizioneIniziale()
+	protected Posizione generaPosizioneIniziale()
 	{
-
+		Posizione p = new Posizione();
+		p.setX(0);
+		p.setY(0);
+		return p;
 	}
 
 	protected int[][] generaMatrice(String famiglia, int dx, int dy)
