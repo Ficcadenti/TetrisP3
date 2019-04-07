@@ -1,28 +1,34 @@
-package it.raffo.tetris.enumeration;
+package it.raffomafr.tetris.enumeration;
 
 public enum MattonciniString
 {
-	M1("111010", 3, 2), M2("1111", 1, 0);
+	T("111010", 3, 2), 
+	I("1111", 4, 1), 
+	L("111100", 3, 3), 
+	J("111001", 3, 2), 
+	O("1111", 2, 2), 
+	S("011110", 3,2), 
+	Z("110011", 3, 2);
 
-	private String	stringaMattoncino;
+	private String	stringa;
 	private int		larghezza;
 	private int		altezza;
 
 	private MattonciniString(String stringaMattoncino, int larghezza, int altezza)
 	{
-		this.stringaMattoncino = stringaMattoncino;
+		this.stringa = stringaMattoncino;
 		this.larghezza = larghezza;
 		this.altezza = altezza;
 	}
 
-	public String getStringaMattoncino()
+	public String getStringa()
 	{
-		return this.stringaMattoncino;
+		return this.stringa;
 	}
 
-	public void setStringaMattoncino(String stringaMattoncino)
+	public void setStringa(String stringaMattoncino)
 	{
-		this.stringaMattoncino = stringaMattoncino;
+		this.stringa = stringaMattoncino;
 	}
 
 	public int getLarghezza()

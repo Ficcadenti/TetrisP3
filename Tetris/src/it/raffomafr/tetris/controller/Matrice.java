@@ -1,8 +1,9 @@
-package it.raffo.tetris.controller;
+package it.raffomafr.tetris.controller;
 
 import org.apache.log4j.Logger;
 
-import it.raffo.tetris.enumeration.Rotazioni;
+import it.raffomafr.tetris.astratti.Mattoncino;
+import it.raffomafr.tetris.enumeration.Rotazioni;
 
 public class Matrice
 {
@@ -145,6 +146,14 @@ public class Matrice
 		this.larghezza = matrice.length;
 		this.altezza = matrice[0].length;
 		this.matrice = matrice;
+	}
+
+	public void setMatrice(Mattoncino m)
+	{
+		this.matrice = m.getMatrice();
+		this.larghezza = this.matrice.length;
+		this.altezza = this.matrice[0].length;
+
 	}
 
 	public void setLarghezza(int w)

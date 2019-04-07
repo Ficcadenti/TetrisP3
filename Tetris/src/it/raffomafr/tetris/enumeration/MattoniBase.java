@@ -1,4 +1,4 @@
-package it.raffo.tetris.enumeration;
+package it.raffomafr.tetris.enumeration;
 
 public enum MattoniBase
 {

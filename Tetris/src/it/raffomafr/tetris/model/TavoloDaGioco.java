@@ -1,9 +1,21 @@
-package it.raffo.tetris.model;
+package it.raffomafr.tetris.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import it.raffo.tetris.enumeration.MattoniBase;
-import it.raffo.tetris.utility.Costanti;
+import it.raffomafr.tetris.astratti.Mattoncino;
+import it.raffomafr.tetris.enumeration.MattoniBase;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoI;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoJ;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoL;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoO;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoS;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoT;
+import it.raffomafr.tetris.model.mattoncini.MattoncinoZ;
+import it.raffomafr.tetris.utility.Costanti;
 
 public class TavoloDaGioco
 {
@@ -12,6 +24,7 @@ public class TavoloDaGioco
 	private int						altezza;
 	private int						larghezza;
 	private int[][]					matrice;
+	private List<Class<?>>			lista;
 
 	public static TavoloDaGioco getInstance()
 	{
@@ -21,9 +34,38 @@ public class TavoloDaGioco
 			istanza.larghezza = Costanti.TavoloDaGioco.LARGHEZZA;
 			istanza.altezza = Costanti.TavoloDaGioco.ALTEZZA;
 			istanza.matrice = new int[istanza.larghezza][istanza.altezza];
+			istanza.lista = new ArrayList<>();
+			istanza.creaMattoncini();
 		}
 
 		return istanza;
+	}
+
+	public void creaMattoncini()
+	{
+		this.lista.add(MattoncinoT.class);
+		this.lista.add(MattoncinoI.class);
+		this.lista.add(MattoncinoS.class);
+		this.lista.add(MattoncinoZ.class);
+		this.lista.add(MattoncinoO.class);
+		this.lista.add(MattoncinoJ.class);
+		this.lista.add(MattoncinoL.class);
+	}
+
+	public Mattoncino generaMattoncino()
+	{
+		Mattoncino clazz = null;
+		Random random = new Random();
+		try
+		{
+			clazz = (Mattoncino) this.lista.get(random.nextInt(this.lista.size())).newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			log.error(e.getMessage(), e);
+		}
+
+		return clazz;
 	}
 
 	public void azzeraMatrice()
