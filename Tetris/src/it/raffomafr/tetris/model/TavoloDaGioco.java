@@ -43,22 +43,24 @@ public class TavoloDaGioco
 
 	public void creaMattoncini()
 	{
-		this.lista.add(MattoncinoT.class);
-		this.lista.add(MattoncinoI.class);
-		this.lista.add(MattoncinoS.class);
-		this.lista.add(MattoncinoZ.class);
-		this.lista.add(MattoncinoO.class);
-		this.lista.add(MattoncinoJ.class);
-		this.lista.add(MattoncinoL.class);
+		this.lista.add(MattoncinoL.class);// 0
+		this.lista.add(MattoncinoI.class);// 1
+		this.lista.add(MattoncinoJ.class);// 2
+		this.lista.add(MattoncinoS.class);// 3
+		this.lista.add(MattoncinoZ.class);// 4
+		this.lista.add(MattoncinoO.class);// 5
+		this.lista.add(MattoncinoT.class);// 6
 	}
 
 	public Mattoncino generaMattoncino()
 	{
 		Mattoncino clazz = null;
 		Random random = new Random();
+		int nMattoncino = random.nextInt(this.lista.size());
 		try
 		{
-			clazz = (Mattoncino) this.lista.get(random.nextInt(this.lista.size())).newInstance();
+			log.info("Genero il mattoncino numero: " + nMattoncino);
+			clazz = (Mattoncino) this.lista.get(nMattoncino).newInstance();
 		}
 		catch (InstantiationException | IllegalAccessException e)
 		{
@@ -140,5 +142,11 @@ public class TavoloDaGioco
 	public void setMatrice(int[][] matrice)
 	{
 		this.matrice = matrice;
+	}
+
+	public void inserisciMattoncino(Mattoncino mattoncinoCasuale)
+	{
+		int mPosX = mattoncinoCasuale.getPosx();
+		int mPosY = mattoncinoCasuale.getPosy();
 	}
 }

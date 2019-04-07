@@ -18,13 +18,12 @@ public class Tetris
 		Matrice matrice = Matrice.getInstance();
 		PropertyConfigurator.configure("log4j.properties");
 
+		// setto il livello 0
 		tetris.generaLivello(0);
 		Mattoncino mattoncinoCasuale = tetris.generaMattoncino();
 		mattoncinoCasuale.info();
 
-		// Matrice.getInstance().setMatrice(mattoncinoCasuale);
-		// Matrice.getInstance().rotazione(Rotazioni.DX);
-		// Matrice.getInstance().stampaMatrice();
+		tetris.inserisciMattoncino(mattoncinoCasuale);
 
 	}
 
