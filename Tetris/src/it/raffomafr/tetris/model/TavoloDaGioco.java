@@ -6,8 +6,8 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import it.raffomafr.tetris.astratti.Mattoncino;
 import it.raffomafr.tetris.enumeration.MattoniBase;
+import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoI;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoJ;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoL;
@@ -105,6 +105,7 @@ public class TavoloDaGioco
 	{
 		for (int y = 0; y < this.matrice[0].length; y++)
 		{
+			System.out.print(String.format("Riga %02d ---> ", y));
 			for (int x = 0; x < this.matrice.length; x++)
 			{
 				System.out.print(this.matrice[x][y]);
@@ -148,5 +149,17 @@ public class TavoloDaGioco
 	{
 		int mPosX = mattoncinoCasuale.getPosx();
 		int mPosY = mattoncinoCasuale.getPosy();
+		int mLarghezza = mattoncinoCasuale.getLarghezza();
+		int mAltezza = mattoncinoCasuale.getAltezza();
+
+		for (int y = 0; y < mAltezza; y++)
+		{
+			for (int x = 0; x < mLarghezza; x++)
+			{
+				this.matrice[mPosX + x][mPosY + y] = mattoncinoCasuale.getMatrice()[x][y]
+						| this.matrice[mPosX + x][mPosY + y];
+			}
+		}
+
 	}
 }

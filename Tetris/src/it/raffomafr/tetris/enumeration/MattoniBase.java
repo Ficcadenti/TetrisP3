@@ -2,8 +2,7 @@ package it.raffomafr.tetris.enumeration;
 
 public enum MattoniBase
 {
-	VUOTO(0, ""), MURO(1, "muro.png"), ROSSO(1, "rosso.png"), GIALLO(1, "giallo.png"), VERDE(1, "verde.png"), BLU(1,
-			"blu.png");
+	VUOTO(0, ""), MURO(1, "muro.png");
 
 	private int		valore;
 	private String	immagine;

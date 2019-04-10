@@ -2,7 +2,6 @@ package it.raffomafr.tetris.model.mattoncini;
 
 import org.apache.log4j.Logger;
 
-import it.raffomafr.tetris.astratti.Mattoncino;
 import it.raffomafr.tetris.enumeration.MattonciniString;
 
 public class MattoncinoJ extends Mattoncino

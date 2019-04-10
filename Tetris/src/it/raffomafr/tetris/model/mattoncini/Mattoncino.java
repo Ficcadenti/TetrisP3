@@ -1,4 +1,4 @@
-package it.raffomafr.tetris.astratti;
+package it.raffomafr.tetris.model.mattoncini;
 
 import java.util.Random;
 
@@ -8,12 +8,26 @@ import it.raffomafr.tetris.controller.Matrice;
 import it.raffomafr.tetris.enumeration.MattonciniString;
 import it.raffomafr.tetris.enumeration.Rotazioni;
 import it.raffomafr.tetris.model.Posizione;
+import it.raffomafr.tetris.model.TavoloDaGioco;
 import it.raffomafr.tetris.utility.Costanti;
 
 public abstract class Mattoncino
 {
 	private static final Logger	log	= Logger.getLogger(Mattoncino.class);
 	private MattonciniString	mattoncino;
+
+	public void ruota()
+	{
+		Matrice.getInstance().setMatrice(this);
+		Matrice.getInstance().rotazione(Rotazioni.SX);
+
+		this.matrice = Matrice.getInstance().getMatrice();
+		// setto larghezza dopo rotazione se necessario
+		this.larghezza = Matrice.getInstance().getLarghezza();
+		// setto altezza dopo rotazione se necessario
+		this.altezza = Matrice.getInstance().getAltezza();
+
+	}
 
 	public Mattoncino(MattonciniString mattoncino)
 	{
@@ -22,11 +36,10 @@ public abstract class Mattoncino
 		// genoro la matrice associata ad T a partire dalla stringa
 		this.matrice = this.generaMatrice(mattoncino.getStringa(), mattoncino.getLarghezza(), mattoncino.getAltezza());
 
-		// genero una posizione iniziale TOP=0 sull'asse x
-		this.generaPosizioneIniziale();
-
 		// genero una rotazione casuale
 		int numeroRotazioniDx = this.generaRotazioneIniziale();
+
+		// numeroRotazioniDx = 0; // per test
 		// setto larghezza prima di rotazione
 		this.larghezza = mattoncino.getLarghezza();
 
@@ -50,6 +63,73 @@ public abstract class Mattoncino
 			// setto altezza dopo rotazione se necessario
 			this.altezza = Matrice.getInstance().getAltezza();
 		}
+
+		// genero una posizione iniziale TOP=0 sull'asse x
+		this.generaPosizioneIniziale();
+	}
+
+	private boolean possoAndareSX()
+	{
+		return true;
+	}
+
+	private boolean possoAndareDX()
+	{
+		return true;
+	}
+
+	private boolean possoAndareGiu()
+	{
+		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
+		int coeff = 0;
+		int ySuccessivoTavolo = this.posy + 1;
+		boolean bRet = true;
+		for (int y = 0; y < this.altezza; y++)
+		{
+			for (int x = 0; x < this.larghezza; x++)
+			{
+				coeff += this.matrice[x][y] * tavolo[this.posx + x][ySuccessivoTavolo + y]; // 1 è il muro
+				if (coeff == 1)
+				{
+					bRet = false;
+					break;
+				}
+
+			}
+		}
+		// log.info("Coefficente : " + coeff);
+		return bRet;
+	}
+
+	public void muoviSX()
+	{
+		if (this.possoAndareSX())
+		{
+			this.posx--;
+		}
+	}
+
+	public void muoviDX()
+	{
+		if (this.possoAndareDX())
+		{
+			this.posx++;
+		}
+	}
+
+	public boolean muoviGiu()
+	{
+		boolean bRet = false;
+		if (this.possoAndareGiu())
+		{
+			this.posy++;
+			bRet = true;
+		}
+		else
+		{
+			log.info("C'è un ostacolo insormontabile...STOP!!!!");
+		}
+		return bRet;
 	}
 
 	private int		altezza;
@@ -111,8 +191,19 @@ public abstract class Mattoncino
 	{
 		Random random = new Random();
 		Posizione p = new Posizione();
-		this.setPosx(random.nextInt(Costanti.TavoloDaGioco.LARGHEZZA_GIOCO));
-		this.setPosy(0);
+		this.setPosx(getRandomNumberInRange(1, Costanti.TavoloDaGioco.LARGHEZZA_GIOCO - this.larghezza));
+	}
+
+	private static int getRandomNumberInRange(int min, int max)
+	{
+
+		if (min >= max)
+		{
+			throw new IllegalArgumentException("max must be greater than min");
+		}
+
+		Random r = new Random();
+		return r.nextInt((max - min) + 1) + min;
 	}
 
 	protected int[][] generaMatrice(String famiglia, int dx, int dy)
@@ -158,6 +249,16 @@ public abstract class Mattoncino
 	public int[][] getMatrice()
 	{
 		return this.matrice;
+	}
+
+	public MattonciniString getMattoncino()
+	{
+		return this.mattoncino;
+	}
+
+	public void setMattoncino(MattonciniString mattoncino)
+	{
+		this.mattoncino = mattoncino;
 	}
 
 }
