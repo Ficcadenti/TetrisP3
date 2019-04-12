@@ -12,6 +12,7 @@ import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 import it.raffomafr.tetris.utility.Costanti;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.sound.SoundFile;
 
 public class Tetris extends PApplet
 {
@@ -20,10 +21,27 @@ public class Tetris extends PApplet
 	private int							accellerazione	= Costanti.Sketch.FRAME_LIVELLO_0;
 	private static final Logger			log				= Logger.getLogger(Tetris.class);
 	private static Map<Integer, PImage>	mapTetrisImg	= new HashMap<Integer, PImage>();
+	private static SoundFile			file;
 
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
+	}
+
+	public Mattoncino calcolaProiezione()
+	{
+		Mattoncino mattoncinoInProiezione = null;
+		try
+		{
+			mattoncinoInProiezione = (Mattoncino) this.mattoncinoCasuale.clone();
+			mattoncinoInProiezione = mattoncinoInProiezione.calcolaProiezione();
+			// this.drawMattoncino(mattoncinoInProiezione);
+		}
+		catch (CloneNotSupportedException e)
+		{
+			log.error(e.getCause(), e);
+		}
+		return mattoncinoInProiezione;
 	}
 
 	@Override
@@ -32,8 +50,12 @@ public class Tetris extends PApplet
 		boolean bRet = true;
 
 		this.drawTavoloDaGioco();
-		// this.drawGriglia();
 
+		Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
+		if (mattoncinoInProiezione != null)
+		{
+			this.drawProiezione(mattoncinoInProiezione);
+		}
 		this.drawMattoncino(this.mattoncinoCasuale);
 
 		if ((this.frameCount % this.accellerazione) == 0)
@@ -92,6 +114,7 @@ public class Tetris extends PApplet
 		mapTetrisImg.put(new Integer(MattonciniString.O.getTipo()), this.loadImage(MattonciniString.O.getNomeImg()));
 		mapTetrisImg.put(new Integer(MattonciniString.S.getTipo()), this.loadImage(MattonciniString.S.getNomeImg()));
 		mapTetrisImg.put(new Integer(MattonciniString.Z.getTipo()), this.loadImage(MattonciniString.Z.getNomeImg()));
+		mapTetrisImg.put(new Integer(MattonciniString.PROIEZIONE.getTipo()), this.loadImage(MattonciniString.PROIEZIONE.getNomeImg()));
 	}
 
 	@Override
@@ -99,7 +122,9 @@ public class Tetris extends PApplet
 	{
 		this.background(20, 20, 20);
 
-		this.caricaImg();
+		this.caricaImg(); // carico le immagini base dei mattoncini
+
+		// this.caricaSound(); // carico audio
 
 		TavoloDaGioco tetris = TavoloDaGioco.getInstance();
 		tetris.generaLivello(0);
@@ -109,9 +134,31 @@ public class Tetris extends PApplet
 		this.mattoncinoCasuale = tetris.generaMattoncino();
 		this.mattoncinoCasuale.info();
 
+		// try
+		// {
+		// this.mattoncinoInProiezione = (Mattoncino) this.mattoncinoCasuale.clone();
+		// Mattoncino m = this.mattoncinoInProiezione.calcolaProiezione();
+		// m.info();
+		// this.drawMattoncino(m);
+		// }
+		// catch (CloneNotSupportedException e)
+		// {
+		// log.error(e.getCause(), e);
+		// }
+		//
+		// tetris.inserisciMattoncino(this.mattoncinoInProiezione);
+		// tetris.stampaTavolo();
+
 		this.drawTavoloDaGioco();
 		// this.drawGriglia();
 
+	}
+
+	private void caricaSound()
+	{
+		file = new SoundFile(this, "tileggeronelpensiero.mp3");
+		file.amp(0.1f);
+		file.play();
 	}
 
 	@Override
@@ -132,7 +179,7 @@ public class Tetris extends PApplet
 			}
 			else if (this.keyCode == DOWN)
 			{
-				this.accellerazione = 5;
+				this.accellerazione = 2;
 			}
 		}
 	}
@@ -160,6 +207,32 @@ public class Tetris extends PApplet
 			this.line(0, y * Costanti.Sketch.ALTEZZA_CELLA, Costanti.Sketch.LARGHEZZA, y * Costanti.Sketch.ALTEZZA_CELLA);
 		}
 		this.popMatrix();
+	}
+
+	public void drawProiezione(Mattoncino mattoncino)
+	{
+		int xPosM;
+		int yPosM;
+		int mLarghezza = mattoncino.getLarghezza();
+		int mAltezza = mattoncino.getAltezza();
+
+		this.pushMatrix();
+
+		for (int y = 0; y < mAltezza; y++)
+		{
+			yPosM = (mattoncino.getPosy() + y) * Costanti.Sketch.ALTEZZA_CELLA;
+			for (int x = 0; x < mLarghezza; x++)
+			{
+				if (mattoncino.getMatrice()[x][y] != 0)
+				{
+					xPosM = (mattoncino.getPosx() + x) * Costanti.Sketch.LARGHEZZA_CELLA;
+					this.image(mapTetrisImg.get(MattonciniString.PROIEZIONE.getTipo()), xPosM, yPosM);
+				}
+			}
+		}
+
+		this.popMatrix();
+
 	}
 
 	public void drawMattoncino(Mattoncino mattoncino)

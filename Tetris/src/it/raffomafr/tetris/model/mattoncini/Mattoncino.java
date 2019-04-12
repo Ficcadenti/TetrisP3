@@ -13,7 +13,7 @@ import it.raffomafr.tetris.utility.Costanti;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-public abstract class Mattoncino
+public abstract class Mattoncino implements Cloneable
 {
 	private static final Logger	log	= Logger.getLogger(Mattoncino.class);
 	private MattonciniString	mattoncino;
@@ -24,6 +24,12 @@ public abstract class Mattoncino
 	private int[][]				matrice;
 	private int					posx;
 	private int					posy;
+
+	@Override
+	public Object clone() throws CloneNotSupportedException
+	{
+		return super.clone();
+	}
 
 	public void ruota()
 	{
@@ -209,6 +215,18 @@ public abstract class Mattoncino
 		return bRet;
 	}
 
+	public Mattoncino calcolaProiezione()
+	{
+		boolean bRet = this.muoviGiu();
+		while (bRet)
+		{
+			bRet = this.muoviGiu();
+		}
+
+		// ora ho la proiezione
+		return this;
+	}
+
 	public boolean muoviGiu()
 	{
 		boolean bRet = false;
@@ -217,10 +235,7 @@ public abstract class Mattoncino
 			this.posy++;
 			bRet = true;
 		}
-		else
-		{
-			log.info("C'è un ostacolo insormontabile...STOP!!!!");
-		}
+
 		return bRet;
 	}
 
