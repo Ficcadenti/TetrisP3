@@ -33,17 +33,35 @@ public abstract class Mattoncino implements Cloneable
 
 	public void ruota()
 	{
-		if (this.possoRuotare())
-		{
-			Matrice.getInstance().setMatrice(this);
-			Matrice.getInstance().rotazione(Rotazioni.SX);
+		log.info("ruotaSenzaControllo()");
 
-			this.matrice = Matrice.getInstance().getMatrice();
-			// setto larghezza dopo rotazione se necessario
-			this.larghezza = Matrice.getInstance().getLarghezza();
-			// setto altezza dopo rotazione se necessario
-			this.altezza = Matrice.getInstance().getAltezza();
+		int matricePreRotazione[][];
+
+		// salvo lo stato attuale della matricetta
+		matricePreRotazione = this.matrice;
+		int larghezzaPreRotazione = this.larghezza;
+		int altezzaPreRotazione = this.altezza;
+
+		// tento la rotazione
+		Matrice.getInstance().setMatrice(this);
+		Matrice.getInstance().rotazione(Rotazioni.SX);
+
+		// setto la matrice ruotata
+		this.matrice = Matrice.getInstance().getMatrice();
+
+		// setto larghezza dopo rotazione se necessario
+		this.larghezza = Matrice.getInstance().getLarghezza();
+
+		// setto altezza dopo rotazione se necessario
+		this.altezza = Matrice.getInstance().getAltezza();
+
+		if (!this.possoRuotare()) // non posso ruotare
+		{
+			this.matrice = matricePreRotazione;
+			this.larghezza = larghezzaPreRotazione;
+			this.altezza = altezzaPreRotazione;
 		}
+
 	}
 
 	public void loadImg()
@@ -165,16 +183,17 @@ public abstract class Mattoncino implements Cloneable
 
 	private boolean possoRuotare()
 	{
+		log.info("possoRuotare()");
 		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
 		int coeff = 0;
-		int ySuccessivoTavolo = this.posy + 1;
+		int ySuccessivoTavolo = this.posy + 1; // 1 è il muro
 		boolean bRet = true;
 		for (int y = 0; y < this.altezza; y++)
 		{
 			for (int x = 0; x < this.larghezza; x++)
 			{
-				coeff += this.matrice[x][y] * tavolo[this.posx + x][ySuccessivoTavolo + y]; // 1 è il muro
-				if (coeff == 1)
+				coeff += this.matrice[x][y] * tavolo[this.posx + x][ySuccessivoTavolo + y];
+				if (coeff > 1)
 				{
 					bRet = false;
 					break;
@@ -182,6 +201,11 @@ public abstract class Mattoncino implements Cloneable
 
 			}
 		}
+		if (bRet == false)
+		{
+			log.info("Non puoi ruotare...ciaone !!!!");
+		}
+
 		return bRet;
 	}
 
@@ -295,6 +319,7 @@ public abstract class Mattoncino implements Cloneable
 		Random random = new Random();
 		Posizione p = new Posizione();
 		this.setPosx(getRandomNumberInRange(1, Costanti.TavoloDaGioco.LARGHEZZA_GIOCO - this.larghezza));
+
 	}
 
 	private static int getRandomNumberInRange(int min, int max)

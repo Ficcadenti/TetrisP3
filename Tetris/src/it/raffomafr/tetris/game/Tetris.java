@@ -124,7 +124,7 @@ public class Tetris extends PApplet
 
 		this.caricaImg(); // carico le immagini base dei mattoncini
 
-		// this.caricaSound(); // carico audio
+		this.caricaSound(); // carico audio
 
 		TavoloDaGioco tetris = TavoloDaGioco.getInstance();
 		tetris.generaLivello(0);
@@ -133,21 +133,6 @@ public class Tetris extends PApplet
 
 		this.mattoncinoCasuale = tetris.generaMattoncino();
 		this.mattoncinoCasuale.info();
-
-		// try
-		// {
-		// this.mattoncinoInProiezione = (Mattoncino) this.mattoncinoCasuale.clone();
-		// Mattoncino m = this.mattoncinoInProiezione.calcolaProiezione();
-		// m.info();
-		// this.drawMattoncino(m);
-		// }
-		// catch (CloneNotSupportedException e)
-		// {
-		// log.error(e.getCause(), e);
-		// }
-		//
-		// tetris.inserisciMattoncino(this.mattoncinoInProiezione);
-		// tetris.stampaTavolo();
 
 		this.drawTavoloDaGioco();
 		// this.drawGriglia();
