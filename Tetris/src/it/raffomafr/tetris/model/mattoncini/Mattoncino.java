@@ -10,28 +10,48 @@ import it.raffomafr.tetris.enumeration.Rotazioni;
 import it.raffomafr.tetris.model.Posizione;
 import it.raffomafr.tetris.model.TavoloDaGioco;
 import it.raffomafr.tetris.utility.Costanti;
+import processing.core.PApplet;
+import processing.core.PImage;
 
 public abstract class Mattoncino
 {
 	private static final Logger	log	= Logger.getLogger(Mattoncino.class);
 	private MattonciniString	mattoncino;
+	private PImage				img;
+	private PApplet				pa;
+	private int					altezza;
+	private int					larghezza;
+	private int[][]				matrice;
+	private int					posx;
+	private int					posy;
 
 	public void ruota()
 	{
-		Matrice.getInstance().setMatrice(this);
-		Matrice.getInstance().rotazione(Rotazioni.SX);
+		if (this.possoRuotare())
+		{
+			Matrice.getInstance().setMatrice(this);
+			Matrice.getInstance().rotazione(Rotazioni.SX);
 
-		this.matrice = Matrice.getInstance().getMatrice();
-		// setto larghezza dopo rotazione se necessario
-		this.larghezza = Matrice.getInstance().getLarghezza();
-		// setto altezza dopo rotazione se necessario
-		this.altezza = Matrice.getInstance().getAltezza();
+			this.matrice = Matrice.getInstance().getMatrice();
+			// setto larghezza dopo rotazione se necessario
+			this.larghezza = Matrice.getInstance().getLarghezza();
+			// setto altezza dopo rotazione se necessario
+			this.altezza = Matrice.getInstance().getAltezza();
+		}
+	}
 
+	public void loadImg()
+	{
+		// carico img del mattoncino
+		log.info("-------------> NOME IMG : " + this.mattoncino.getNomeImg());
+		this.setImg(this.pa.loadImage(this.mattoncino.getNomeImg()));
 	}
 
 	public Mattoncino(MattonciniString mattoncino)
 	{
+		// setto il mattoncino
 		this.mattoncino = mattoncino;
+
 		log.info("-----> " + mattoncino.getDesc());
 		// genoro la matrice associata ad T a partire dalla stringa
 		this.matrice = this.generaMatrice(mattoncino.getStringa(), mattoncino.getLarghezza(), mattoncino.getAltezza());
@@ -62,6 +82,7 @@ public abstract class Mattoncino
 
 			// setto altezza dopo rotazione se necessario
 			this.altezza = Matrice.getInstance().getAltezza();
+
 		}
 
 		// genero una posizione iniziale TOP=0 sull'asse x
@@ -70,15 +91,73 @@ public abstract class Mattoncino
 
 	private boolean possoAndareSX()
 	{
-		return true;
+
+		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
+		int coeff = 0;
+		int xSuccessivoTavolo = this.posx - 1;
+		boolean bRet = true;
+		for (int y = 0; y < this.altezza; y++)
+		{
+			for (int x = 0; x < this.larghezza; x++)
+			{
+				coeff += this.matrice[x][y] * tavolo[xSuccessivoTavolo + x][this.posy + y]; // 1 è il muro
+				if (coeff > 0)
+				{
+					bRet = false;
+					break;
+				}
+
+			}
+		}
+
+		return bRet;
 	}
 
 	private boolean possoAndareDX()
 	{
-		return true;
+		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
+		int coeff = 0;
+		int xSuccessivoTavolo = this.posx + 1;
+		boolean bRet = true;
+		for (int y = 0; y < this.altezza; y++)
+		{
+			for (int x = 0; x < this.larghezza; x++)
+			{
+				coeff += this.matrice[x][y] * tavolo[xSuccessivoTavolo + x][this.posy + y]; // 1 è il muro
+				if (coeff > 0)
+				{
+					bRet = false;
+					break;
+				}
+			}
+		}
+
+		return bRet;
 	}
 
 	private boolean possoAndareGiu()
+	{
+		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
+		int coeff = 0;
+		int ySuccessivoTavolo = this.posy + 1;
+		boolean bRet = true;
+		for (int y = 0; y < this.altezza; y++)
+		{
+			for (int x = 0; x < this.larghezza; x++)
+			{
+				coeff += this.matrice[x][y] * tavolo[this.posx + x][ySuccessivoTavolo + y]; // 1 è il muro
+				if (coeff > 0)
+				{
+					bRet = false;
+					break;
+				}
+
+			}
+		}
+		return bRet;
+	}
+
+	private boolean possoRuotare()
 	{
 		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
 		int coeff = 0;
@@ -97,24 +176,37 @@ public abstract class Mattoncino
 
 			}
 		}
-		// log.info("Coefficente : " + coeff);
 		return bRet;
 	}
 
-	public void muoviSX()
+	public boolean muoviSX()
 	{
+		boolean bRet = false;
 		if (this.possoAndareSX())
 		{
 			this.posx--;
+			bRet = true;
 		}
+		else
+		{
+			bRet = false;
+		}
+		return bRet;
 	}
 
-	public void muoviDX()
+	public boolean muoviDX()
 	{
+		boolean bRet = false;
 		if (this.possoAndareDX())
 		{
 			this.posx++;
+			bRet = true;
 		}
+		else
+		{
+			bRet = false;
+		}
+		return bRet;
 	}
 
 	public boolean muoviGiu()
@@ -132,14 +224,10 @@ public abstract class Mattoncino
 		return bRet;
 	}
 
-	private int		altezza;
-	private int		larghezza;
-	private int[][]	matrice;
-	private int		posx;
-	private int		posy;
-
 	public void stampa()
 	{
+		log.info("Larghezza : " + this.larghezza);
+		log.info("altezza   : " + this.altezza);
 		for (int y = 0; y < this.altezza; y++)
 		{
 			for (int x = 0; x < this.larghezza; x++)
@@ -214,7 +302,7 @@ public abstract class Mattoncino
 		{
 			for (int x = 0; x < dx; x++)
 			{
-				matrice[x][y] = Integer.parseInt("" + famiglia.charAt(pos++));
+				matrice[x][y] = Integer.parseInt("" + famiglia.charAt(pos++)) * this.mattoncino.getTipo();
 			}
 		}
 
@@ -259,6 +347,26 @@ public abstract class Mattoncino
 	public void setMattoncino(MattonciniString mattoncino)
 	{
 		this.mattoncino = mattoncino;
+	}
+
+	public PApplet getPa()
+	{
+		return this.pa;
+	}
+
+	public void setPa(PApplet pa)
+	{
+		this.pa = pa;
+	}
+
+	public PImage getImg()
+	{
+		return this.img;
+	}
+
+	public void setImg(PImage img)
+	{
+		this.img = img;
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import it.raffomafr.tetris.enumeration.MattoniBase;
+import it.raffomafr.tetris.enumeration.MattonciniString;
 import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoI;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoJ;
@@ -16,6 +16,7 @@ import it.raffomafr.tetris.model.mattoncini.MattoncinoS;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoT;
 import it.raffomafr.tetris.model.mattoncini.MattoncinoZ;
 import it.raffomafr.tetris.utility.Costanti;
+import processing.core.PApplet;
 
 public class TavoloDaGioco
 {
@@ -25,6 +26,7 @@ public class TavoloDaGioco
 	private int						larghezza;
 	private int[][]					matrice;
 	private List<Class<?>>			lista;
+	private PApplet					pa;
 
 	public static TavoloDaGioco getInstance()
 	{
@@ -61,6 +63,8 @@ public class TavoloDaGioco
 		{
 			log.info("Genero il mattoncino numero: " + nMattoncino);
 			clazz = (Mattoncino) this.lista.get(nMattoncino).newInstance();
+			clazz.setPa(this.pa);
+			clazz.loadImg();
 		}
 		catch (InstantiationException | IllegalAccessException e)
 		{
@@ -70,13 +74,61 @@ public class TavoloDaGioco
 		return clazz;
 	}
 
+	public List<Integer> checkRighePiene()
+	{
+		List<Integer> listaRighe = new ArrayList<>();
+		int sum = 0;
+
+		for (int y = 0; y < (this.altezza - 1); y++)
+		{
+			for (int x = 1; x < (this.larghezza - 1); x++)
+			{
+				if (this.matrice[x][y] > 0)
+				{
+					sum++;
+				}
+				// sum = sum + this.matrice[x][y];
+			}
+			if (sum == Costanti.TavoloDaGioco.LARGHEZZA_GIOCO)
+			{
+				listaRighe.add(y);
+			}
+			sum = 0;
+		}
+
+		return listaRighe;
+	}
+
+	public void cancellaRighePiene()
+	{
+		List<Integer> listaRighe = this.checkRighePiene();
+		for (int i = 0; i < listaRighe.size(); i++)
+		{
+			for (int y = listaRighe.get(i); y > 0; y--)
+			{
+				for (int x = 1; x < (this.larghezza - 1); x++)
+				{
+					this.matrice[x][y] = this.matrice[x][y - 1];
+				}
+			}
+		}
+
+		if (listaRighe.size() > 0)
+		{
+			for (int x = 1; x < (this.larghezza - 1); x++)
+			{
+				this.matrice[x][0] = 0;
+			}
+		}
+	}
+
 	public void azzeraMatrice()
 	{
 		for (int y = 0; y < this.matrice[0].length; y++)
 		{
 			for (int x = 0; x < this.matrice.length; x++)
 			{
-				this.matrice[x][y] = MattoniBase.VUOTO.getValore();
+				this.matrice[x][y] = MattonciniString.VUOTO.getTipo();
 			}
 		}
 	}
@@ -89,15 +141,16 @@ public class TavoloDaGioco
 
 	public void generaMuro(int livello)
 	{
+
 		for (int y = 0; y < this.altezza; y++)
 		{
-			this.matrice[0][y] = MattoniBase.MURO.getValore();
-			this.matrice[this.larghezza - 1][y] = MattoniBase.MURO.getValore();
+			this.matrice[0][y] = MattonciniString.MURO.getTipo();
+			this.matrice[this.larghezza - 1][y] = MattonciniString.MURO.getTipo();
 		}
 
 		for (int x = 0; x < this.larghezza; x++)
 		{
-			this.matrice[x][this.altezza - 1] = MattoniBase.MURO.getValore();
+			this.matrice[x][this.altezza - 1] = MattonciniString.MURO.getTipo();
 		}
 	}
 
@@ -145,21 +198,30 @@ public class TavoloDaGioco
 		this.matrice = matrice;
 	}
 
-	public void inserisciMattoncino(Mattoncino mattoncinoCasuale)
+	public void inserisciMattoncino(Mattoncino mattoncino)
 	{
-		int mPosX = mattoncinoCasuale.getPosx();
-		int mPosY = mattoncinoCasuale.getPosy();
-		int mLarghezza = mattoncinoCasuale.getLarghezza();
-		int mAltezza = mattoncinoCasuale.getAltezza();
+		int mPosX = mattoncino.getPosx();
+		int mPosY = mattoncino.getPosy();
+		int mLarghezza = mattoncino.getLarghezza();
+		int mAltezza = mattoncino.getAltezza();
 
 		for (int y = 0; y < mAltezza; y++)
 		{
 			for (int x = 0; x < mLarghezza; x++)
 			{
-				this.matrice[mPosX + x][mPosY + y] = mattoncinoCasuale.getMatrice()[x][y]
-						| this.matrice[mPosX + x][mPosY + y];
+				this.matrice[mPosX + x][mPosY + y] = mattoncino.getMatrice()[x][y] | this.matrice[mPosX + x][mPosY + y];
 			}
 		}
 
+	}
+
+	public PApplet getPa()
+	{
+		return this.pa;
+	}
+
+	public void setPa(PApplet pa)
+	{
+		this.pa = pa;
 	}
 }

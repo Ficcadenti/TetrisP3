@@ -2,7 +2,7 @@ package it.raffomafr.tetris.enumeration;
 
 public enum Colore
 {
-	AZZURRO(0, 255, 255), BLUE(0, 2, 173), ARANCIONE(255, 175, 2), GIALLO(255, 255, 0), VERDE(0, 255, 0), ROSA(255, 1, 204), ROSSO(255, 0, 0);
+	NERO(0, 0, 0), AZZURRO(0, 255, 255), BLUE(0, 2, 173), ARANCIONE(255, 175, 2), GIALLO(255, 255, 0), VERDE(0, 255, 0), ROSA(255, 1, 204), ROSSO(255, 0, 0);
 
 	private int	r;
 	private int	g;
