@@ -2,8 +2,8 @@ package it.raffomafr.tetris.controller;
 
 import org.apache.log4j.Logger;
 
-import it.raffomafr.tetris.astratti.Mattoncino;
 import it.raffomafr.tetris.enumeration.Rotazioni;
+import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 
 public class Matrice
 {

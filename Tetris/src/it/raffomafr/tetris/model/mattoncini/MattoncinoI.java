@@ -2,7 +2,6 @@ package it.raffomafr.tetris.model.mattoncini;
 
 import org.apache.log4j.Logger;
 
-import it.raffomafr.tetris.astratti.Mattoncino;
 import it.raffomafr.tetris.enumeration.MattonciniString;
 
 public class MattoncinoI extends Mattoncino
@@ -13,8 +12,6 @@ public class MattoncinoI extends Mattoncino
 	public MattoncinoI()
 	{
 		super(mattoncino);
-		log.info("Genero mattoncino : " + mattoncino.getDesc());
-		super.stampa();
 	}
 
 }
