@@ -15,7 +15,6 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
-import processing.sound.SoundFile;
 
 public class Tetris extends PApplet
 {
@@ -25,7 +24,7 @@ public class Tetris extends PApplet
 	private int								accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
 	private static final Logger				log							= Logger.getLogger(Tetris.class);
 	private static Map<Integer, PImage>		mapTetrisImg				= new HashMap<Integer, PImage>();
-	private static SoundFile				file;
+	// private static SoundFile file;
 	private static int						numRigheAbbattuteTotali;
 	private boolean							gameOver					= false;
 	private ParticleSystem					ps;
@@ -334,9 +333,9 @@ public class Tetris extends PApplet
 
 	private void caricaSound()
 	{
-		file = new SoundFile(this, "tileggeronelpensiero.mp3");
-		file.amp(0.1f);
-		file.play();
+		// file = new SoundFile(this, "tileggeronelpensiero.mp3");
+		// file.amp(0.1f);
+		// file.play();
 	}
 
 	@Override
