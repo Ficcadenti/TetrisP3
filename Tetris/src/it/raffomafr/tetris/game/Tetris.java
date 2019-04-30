@@ -1,5 +1,6 @@
 package it.raffomafr.tetris.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,21 +12,72 @@ import it.raffomafr.tetris.model.TavoloDaGioco;
 import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 import it.raffomafr.tetris.utility.Costanti;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
+import processing.core.PVector;
 import processing.sound.SoundFile;
 
 public class Tetris extends PApplet
 {
 
-	private Mattoncino					mattoncinoCasuale;
-	private int							accellerazione	= Costanti.Sketch.FRAME_LIVELLO_0;
-	private static final Logger			log				= Logger.getLogger(Tetris.class);
-	private static Map<Integer, PImage>	mapTetrisImg	= new HashMap<Integer, PImage>();
-	private static SoundFile			file;
+	private Mattoncino						mattoncinoCasuale;
+	private Mattoncino						prossimoMattoncinoCasuale	= null;
+	private int								accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
+	private static final Logger				log							= Logger.getLogger(Tetris.class);
+	private static Map<Integer, PImage>		mapTetrisImg				= new HashMap<Integer, PImage>();
+	private static SoundFile				file;
+	private static int						numRigheAbbattuteTotali;
+	private boolean							gameOver					= false;
+	private ParticleSystem					ps;
+	private Map<MattonciniString, Integer>	statistiche					= new HashMap<>();
 
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
+		char c = '\u004e';
+		System.out.println((int) c);
+	}
+
+	public void generaPuntiHeader(int i)
+	{
+		this.pushMatrix();
+		for (int x = 0; x < i; x++)
+		{
+			this.stroke(this.random(255), this.random(255), this.random(255));
+			this.strokeWeight(this.random(0, 4));
+			this.point(this.random(0, Costanti.Sketch.LARGHEZZA), this.random(0, Costanti.Sketch.ALTEZZA_HEADER));
+		}
+		this.popMatrix();
+		this.stroke(0, 0, 0);
+		this.strokeWeight(1);
+	}
+
+	public void generaPuntiStatistiche(int i)
+	{
+		this.pushMatrix();
+		for (int x = 0; x < i; x++)
+		{
+			this.stroke(this.random(255), this.random(255), this.random(255));
+			this.strokeWeight(this.random(0, 4));
+			this.point(Costanti.Sketch.LARGHEZZA + this.random(0, Costanti.Sketch.LARGHEZZA_STATISTICHE), this.random(0, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER));
+		}
+		this.popMatrix();
+		this.stroke(0, 0, 0);
+		this.strokeWeight(1);
+	}
+
+	public void generaPuntiFooter(int i)
+	{
+		this.pushMatrix();
+		for (int x = 0; x < i; x++)
+		{
+			this.stroke(this.random(255), this.random(255), this.random(255));
+			this.strokeWeight(this.random(0, 4));
+			this.point(this.random(0, Costanti.Sketch.LARGHEZZA), Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + this.random(0, Costanti.Sketch.ALTEZZA_FOOTER));
+		}
+		this.popMatrix();
+		this.stroke(0, 0, 0);
+		this.strokeWeight(1);
 	}
 
 	public Mattoncino calcolaProiezione()
@@ -47,29 +99,164 @@ public class Tetris extends PApplet
 	@Override
 	public void draw()
 	{
-		boolean bRet = true;
-
-		this.drawTavoloDaGioco();
-
-		Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
-		if (mattoncinoInProiezione != null)
+		if (this.gameOver == false)
 		{
-			this.drawProiezione(mattoncinoInProiezione);
-		}
-		this.drawMattoncino(this.mattoncinoCasuale);
+			boolean bRet = true;
 
-		if ((this.frameCount % this.accellerazione) == 0)
+			this.drawTavoloDaGioco();
+			this.drawSatistiche();
+			// this.drawGriglia();
+
+			// this.ps.addParticle();
+			// this.ps.run();
+
+			Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
+			if (mattoncinoInProiezione != null)
+			{
+				this.drawProiezione(mattoncinoInProiezione);
+			}
+			this.drawMattoncino(this.mattoncinoCasuale);
+			this.drawProssimoMattoncino(this.prossimoMattoncinoCasuale);
+
+			if ((this.frameCount % this.accellerazione) == 0)
+			{
+				bRet = this.mattoncinoCasuale.muoviGiu();
+			}
+
+			if (bRet == false)
+			{
+
+				this.drawSatistiche();
+				this.calcolaStatistiche();
+
+				if (this.mattoncinoCasuale.getPosy() == 0)
+				{
+					this.gameOver = true;
+				}
+				TavoloDaGioco.getInstance().inserisciMattoncino(this.mattoncinoCasuale);
+
+				this.mattoncinoCasuale = this.prossimoMattoncinoCasuale;
+				this.prossimoMattoncinoCasuale = TavoloDaGioco.getInstance().generaMattoncino();
+
+				int numeroRigheAbbattute = TavoloDaGioco.getInstance().cancellaRighePiene();
+				if (numeroRigheAbbattute > 0)
+				{
+					numRigheAbbattuteTotali += numeroRigheAbbattute;
+				}
+				bRet = true;
+			}
+
+			this.drawPunteggio();
+		}
+		else
 		{
-			bRet = this.mattoncinoCasuale.muoviGiu();
+			this.gameOver();
+			this.drawPunteggio();
+		}
+	}
+
+	private void calcolaStatistiche()
+	{
+		Integer p = this.statistiche.get(this.mattoncinoCasuale.getMattoncino());
+		if (p == null)
+		{
+			p = new Integer(1);
+		}
+		else
+		{
+			p = p + 1; // incremento le statisriche
+		}
+		this.statistiche.put(this.mattoncinoCasuale.getMattoncino(), p);
+		// System.out.println("***************");
+		// this.statistiche.entrySet().stream().forEach(k ->
+		// System.out.println(k.getKey().getDesc() + ": " + k.getValue()));
+
+	}
+
+	public void gameOver()
+	{
+		this.pushMatrix();
+		this.fill(0, 0, 0);
+		this.rect(0, 0, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA);
+		this.fill(255);
+		this.textAlign(PConstants.LEFT);
+		this.textFont(this.createFont("Arial", 32, true), 20);
+		this.text("GAME OVER !!!!", 30, (Costanti.Sketch.ALTEZZA_HEADER) + (Costanti.Sketch.ALTEZZA / 2));
+		this.popMatrix();
+	}
+
+	public void drawPunteggio()
+	{
+		this.pushMatrix();
+		this.fill(0, 0, 0);
+		this.rect(0, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.fill(255);
+		this.textAlign(PConstants.LEFT);
+		this.textFont(this.createFont("Arial", 32, true), 20);
+		this.text("Righe  : " + numRigheAbbattuteTotali, 50, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA + (Costanti.Sketch.ALTEZZA_FOOTER / 2) + 5);
+		this.generaPuntiFooter(20);
+		this.popMatrix();
+	}
+
+	public void drawSatistiche()
+	{
+		this.pushMatrix();
+		this.fill(0, 0, 0);
+		this.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Sketch.LARGHEZZA_STATISTICHE, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.generaPuntiStatistiche(100);
+		this.fill(255);
+		this.textAlign(PConstants.LEFT);
+		this.textFont(this.createFont("Arial", 32, true), 20);
+		if (this.statistiche.get(MattonciniString.I) != null)
+		{
+			this.text(this.statistiche.get(MattonciniString.I), Costanti.Sketch.LARGHEZZA + 50, 400);
+
+		}
+		else
+		{
+			this.text(0, Costanti.Sketch.LARGHEZZA + 50, 400);
 		}
 
-		if (bRet == false)
+		if (this.statistiche.get(MattonciniString.L) != null)
 		{
-			TavoloDaGioco.getInstance().inserisciMattoncino(this.mattoncinoCasuale);
-			this.mattoncinoCasuale = TavoloDaGioco.getInstance().generaMattoncino();
-			TavoloDaGioco.getInstance().cancellaRighePiene();
-			bRet = true;
+			this.text(this.statistiche.get(MattonciniString.L), Costanti.Sketch.LARGHEZZA + 100, 400);
 		}
+		else
+		{
+			this.text(0, Costanti.Sketch.LARGHEZZA + 100, 400);
+		}
+
+		if (this.statistiche.get(MattonciniString.T) != null)
+		{
+			this.text(this.statistiche.get(MattonciniString.T), Costanti.Sketch.LARGHEZZA + 150, 400);
+
+		}
+		else
+		{
+			this.text(0, Costanti.Sketch.LARGHEZZA + 150, 400);
+		}
+
+		if (this.statistiche.get(MattonciniString.S) != null)
+		{
+			this.text(this.statistiche.get(MattonciniString.S), Costanti.Sketch.LARGHEZZA + 200, 400);
+
+		}
+		else
+		{
+			this.text(0, Costanti.Sketch.LARGHEZZA + 200, 400);
+		}
+
+		if (this.statistiche.get(MattonciniString.Z) != null)
+		{
+			this.text(this.statistiche.get(MattonciniString.Z), Costanti.Sketch.LARGHEZZA + 250, 400);
+
+		}
+		else
+		{
+			this.text(0, Costanti.Sketch.LARGHEZZA + 250, 400);
+		}
+
+		this.popMatrix();
 	}
 
 	private void drawTavoloDaGioco()
@@ -85,12 +272,14 @@ public class Tetris extends PApplet
 			{
 				if (tavolo[x][y] == MattonciniString.VUOTO.getTipo())
 				{
+					this.stroke(0, 0, 0);
+					this.rect((x * Costanti.Sketch.LARGHEZZA_CELLA), (Costanti.Sketch.ALTEZZA_HEADER) + (y * Costanti.Sketch.ALTEZZA_CELLA), Costanti.Sketch.LARGHEZZA_CELLA, Costanti.Sketch.ALTEZZA_CELLA);
 					this.fill(20, 20, 20);
-					this.rect(x * Costanti.Sketch.LARGHEZZA_CELLA, y * Costanti.Sketch.ALTEZZA_CELLA, Costanti.Sketch.LARGHEZZA_CELLA, Costanti.Sketch.ALTEZZA_CELLA);
+					this.rect((x * Costanti.Sketch.LARGHEZZA_CELLA), (Costanti.Sketch.ALTEZZA_HEADER) + (y * Costanti.Sketch.ALTEZZA_CELLA), Costanti.Sketch.LARGHEZZA_CELLA, Costanti.Sketch.ALTEZZA_CELLA);
 				}
 				else
 				{
-					this.image(mapTetrisImg.get(tavolo[x][y]), x * Costanti.Sketch.LARGHEZZA_CELLA, y * Costanti.Sketch.ALTEZZA_CELLA);
+					this.image(mapTetrisImg.get(tavolo[x][y]), x * Costanti.Sketch.LARGHEZZA_CELLA, (Costanti.Sketch.ALTEZZA_HEADER) + (y * Costanti.Sketch.ALTEZZA_CELLA));
 				}
 
 			}
@@ -101,7 +290,7 @@ public class Tetris extends PApplet
 	@Override
 	public void settings()
 	{
-		this.size(Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA);
+		this.size(Costanti.Sketch.LARGHEZZA + Costanti.Sketch.LARGHEZZA_STATISTICHE, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
 	}
 
 	public void caricaImg() // non mi piace, ma per velocità (contro ogni buon proposit) lo faccio:)
@@ -120,6 +309,7 @@ public class Tetris extends PApplet
 	@Override
 	public void setup()
 	{
+		this.ps = new ParticleSystem(new PVector(this.width / 2, 50), this);
 		this.background(20, 20, 20);
 
 		this.caricaImg(); // carico le immagini base dei mattoncini
@@ -132,9 +322,12 @@ public class Tetris extends PApplet
 		PropertyConfigurator.configure("log4j.properties");
 
 		this.mattoncinoCasuale = tetris.generaMattoncino();
-		this.mattoncinoCasuale.info();
+
+		this.prossimoMattoncinoCasuale = tetris.generaMattoncino();
+		// this.prossimoMattoncinoCasuale.info();
 
 		this.drawTavoloDaGioco();
+
 		// this.drawGriglia();
 
 	}
@@ -211,7 +404,7 @@ public class Tetris extends PApplet
 				if (mattoncino.getMatrice()[x][y] != 0)
 				{
 					xPosM = (mattoncino.getPosx() + x) * Costanti.Sketch.LARGHEZZA_CELLA;
-					this.image(mapTetrisImg.get(MattonciniString.PROIEZIONE.getTipo()), xPosM, yPosM);
+					this.image(mapTetrisImg.get(MattonciniString.PROIEZIONE.getTipo()), xPosM, (Costanti.Sketch.ALTEZZA_HEADER) + yPosM);
 				}
 			}
 		}
@@ -237,7 +430,7 @@ public class Tetris extends PApplet
 				if (mattoncino.getMatrice()[x][y] != 0)
 				{
 					xPosM = (mattoncino.getPosx() + x) * Costanti.Sketch.LARGHEZZA_CELLA;
-					this.image(mattoncino.getImg(), xPosM, yPosM);
+					this.image(mattoncino.getImg(), xPosM, (Costanti.Sketch.ALTEZZA_HEADER) + yPosM);
 				}
 			}
 		}
@@ -246,4 +439,120 @@ public class Tetris extends PApplet
 
 	}
 
+	public void drawProssimoMattoncino(Mattoncino mattoncino)
+	{
+		if (mattoncino == null)
+		{
+			return;
+		}
+		int xPosM;
+		int yPosM;
+		int mLarghezza = mattoncino.getLarghezza();
+		int mAltezza = mattoncino.getAltezza();
+
+		this.pushMatrix();
+
+		this.fill(0, 0, 0);
+		this.rect(0, 0, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER);
+
+		for (int y = 0; y < mAltezza; y++)
+		{
+			yPosM = (0 + y) * Costanti.Sketch.ALTEZZA_CELLA;
+			for (int x = 0; x < mLarghezza; x++)
+			{
+				if (mattoncino.getMatrice()[x][y] != 0)
+				{
+					xPosM = (mattoncino.getPosx() + x) * Costanti.Sketch.LARGHEZZA_CELLA;
+					this.image(mattoncino.getImg(), xPosM, 20 + yPosM);
+				}
+			}
+		}
+		this.generaPuntiHeader(20);
+		this.popMatrix();
+	}
+
+}
+
+class ParticleSystem
+{
+	ArrayList<Particle>	particles;
+	PVector				origin;
+	PApplet				pa;
+
+	ParticleSystem(PVector position, PApplet pa)
+	{
+		this.pa = pa;
+		this.origin = position.copy();
+		this.particles = new ArrayList<Particle>();
+	}
+
+	void addParticle()
+	{
+		this.particles.add(new Particle(this.origin, this.pa));
+	}
+
+	void run()
+	{
+		for (int i = this.particles.size() - 1; i >= 0; i--)
+		{
+			Particle p = this.particles.get(i);
+			p.run();
+			if (p.isDead())
+			{
+				this.particles.remove(i);
+			}
+		}
+	}
+}
+
+class Particle
+{
+	PVector	position;
+	PVector	velocity;
+	PVector	acceleration;
+	float	lifespan;
+	PApplet	pa;
+
+	Particle(PVector l, PApplet pa)
+	{
+		this.pa = pa;
+		this.acceleration = new PVector(0, 0.01f);
+		this.velocity = new PVector(this.pa.random(-1, 1), this.pa.random(-2, 0));
+		this.position = l.copy();
+		this.lifespan = 255.0f;
+	}
+
+	void run()
+	{
+		this.update();
+		this.display();
+	}
+
+	void update()
+	{
+		this.velocity.add(this.acceleration);
+		this.position.add(this.velocity);
+		this.lifespan -= 1.0;
+	}
+
+	// Method to display
+	void display()
+	{
+		this.pa.stroke(255, this.lifespan);
+		this.pa.fill(255, this.lifespan);
+		this.pa.ellipse(this.position.x, this.position.y, 4, 4);
+	}
+
+	// Is the particle still useful?
+	boolean isDead()
+	{
+		if (this.lifespan < 0.0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

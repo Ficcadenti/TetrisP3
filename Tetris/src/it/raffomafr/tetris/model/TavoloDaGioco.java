@@ -61,7 +61,6 @@ public class TavoloDaGioco
 		int nMattoncino = random.nextInt(this.lista.size());
 		try
 		{
-			log.info("Genero il mattoncino numero: " + nMattoncino);
 			clazz = (Mattoncino) this.lista.get(nMattoncino).newInstance();
 			clazz.setPa(this.pa);
 			clazz.loadImg();
@@ -99,9 +98,11 @@ public class TavoloDaGioco
 		return listaRighe;
 	}
 
-	public void cancellaRighePiene()
+	public int cancellaRighePiene()
 	{
+		int iRet = 0;
 		List<Integer> listaRighe = this.checkRighePiene();
+
 		for (int i = 0; i < listaRighe.size(); i++)
 		{
 			for (int y = listaRighe.get(i); y > 0; y--)
@@ -115,11 +116,13 @@ public class TavoloDaGioco
 
 		if (listaRighe.size() > 0)
 		{
+			iRet = listaRighe.size();
 			for (int x = 1; x < (this.larghezza - 1); x++)
 			{
 				this.matrice[x][0] = 0;
 			}
 		}
+		return iRet;
 	}
 
 	public void azzeraMatrice()

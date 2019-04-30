@@ -33,7 +33,8 @@ public abstract class Mattoncino implements Cloneable
 
 	public void ruota()
 	{
-		log.info("ruotaSenzaControllo()");
+		boolean oltreBordo = false;
+		// log.info("ruotaSenzaControllo()");
 
 		int matricePreRotazione[][];
 
@@ -54,8 +55,20 @@ public abstract class Mattoncino implements Cloneable
 
 		// setto altezza dopo rotazione se necessario
 		this.altezza = Matrice.getInstance().getAltezza();
+		//
+		// log.info("this.posx : " + this.posx);
+		// log.info("this.larghezza : " + this.larghezza);
+		// log.info("LARGHEZZA_GIOCO : " + Costanti.TavoloDaGioco.LARGHEZZA_GIOCO);
+		if ((this.posx + this.larghezza) > (Costanti.TavoloDaGioco.LARGHEZZA_GIOCO + 1))
+		{
+			oltreBordo = true;
+		}
+		if ((this.posy + this.altezza) >= (Costanti.TavoloDaGioco.ALTEZZA_GIOCO + 1))
+		{
+			oltreBordo = true;
+		}
 
-		if (!this.possoRuotare()) // non posso ruotare
+		if (oltreBordo || !this.possoRuotare()) // non posso ruotare
 		{
 			this.matrice = matricePreRotazione;
 			this.larghezza = larghezzaPreRotazione;
@@ -67,7 +80,6 @@ public abstract class Mattoncino implements Cloneable
 	public void loadImg()
 	{
 		// carico img del mattoncino
-		log.info("-------------> NOME IMG : " + this.mattoncino.getNomeImg());
 		this.setImg(this.pa.loadImage(this.mattoncino.getNomeImg()));
 	}
 
@@ -76,7 +88,6 @@ public abstract class Mattoncino implements Cloneable
 		// setto il mattoncino
 		this.mattoncino = mattoncino;
 
-		log.info("-----> " + mattoncino.getDesc());
 		// genoro la matrice associata ad T a partire dalla stringa
 		this.matrice = this.generaMatrice(mattoncino.getStringa(), mattoncino.getLarghezza(), mattoncino.getAltezza());
 
@@ -89,8 +100,6 @@ public abstract class Mattoncino implements Cloneable
 
 		// setto altezza prima di rotazione
 		this.altezza = mattoncino.getAltezza();
-
-		log.info("Rotazioni iniziali(" + numeroRotazioniDx + "): " + (90 * numeroRotazioniDx) + "°");
 
 		if (numeroRotazioniDx > 0)
 		{
@@ -183,7 +192,6 @@ public abstract class Mattoncino implements Cloneable
 
 	private boolean possoRuotare()
 	{
-		log.info("possoRuotare()");
 		int tavolo[][] = TavoloDaGioco.getInstance().getMatrice();
 		int coeff = 0;
 		int ySuccessivoTavolo = this.posy + 1; // 1 è il muro

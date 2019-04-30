@@ -12,8 +12,6 @@ public class MattoncinoZ extends Mattoncino
 	public MattoncinoZ()
 	{
 		super(mattoncino);
-		log.info("Genero mattoncino : " + mattoncino.getDesc());
-		super.stampa();
 	}
 
 }
