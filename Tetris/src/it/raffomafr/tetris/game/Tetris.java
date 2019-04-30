@@ -169,18 +169,6 @@ public class Tetris extends PApplet
 
 	}
 
-	public void gameOver()
-	{
-		this.pushMatrix();
-		this.fill(0, 0, 0);
-		this.rect(0, 0, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA);
-		this.fill(255);
-		this.textAlign(PConstants.LEFT);
-		this.textFont(this.createFont("Arial", 32, true), 20);
-		this.text("GAME OVER !!!!", 30, (Costanti.Sketch.ALTEZZA_HEADER) + (Costanti.Sketch.ALTEZZA / 2));
-		this.popMatrix();
-	}
-
 	public void drawPunteggio()
 	{
 		this.pushMatrix();
@@ -336,19 +324,66 @@ public class Tetris extends PApplet
 	{
 		pausa();
 		{
-			if (this.keyCode == UP)
+			// forzatura del gameover con tasto G
+			final int gameover = this.keyCode;
+			if (gameover == 'G')
 			{
-				this.mattoncinoCasuale.ruota();
-			} else if (this.keyCode == LEFT)
-			{
-				this.mattoncinoCasuale.muoviSX();
-			} else if (this.keyCode == RIGHT)
-			{
-				this.mattoncinoCasuale.muoviDX();
-			} else if (this.keyCode == DOWN)
-			{
-				this.accellerazione = 2;
+				gameOver();
 			}
+		}
+		if (this.keyCode == UP)
+		{
+			this.mattoncinoCasuale.ruota();
+		} else if (this.keyCode == LEFT)
+		{
+			this.mattoncinoCasuale.muoviSX();
+		} else if (this.keyCode == RIGHT)
+		{
+			this.mattoncinoCasuale.muoviDX();
+		} else if (this.keyCode == DOWN)
+		{
+			this.accellerazione = 2;
+		}
+
+	}
+
+	public void gameOver()
+	{
+		noLoop(); // <---se teniamo noLoop non possiamo controllare il mouse :-(
+		fill(255);
+		imageMode(CENTER);
+		image(
+		        this.loadImage(UtilityGioco.GAMEOVER.getDesc(),
+		                UtilityGioco.GAMEOVER.getEstensione()),
+		        UtilityGioco.GAMEOVER.getPosX(),
+		        UtilityGioco.GAMEOVER.getPosY(),
+		        UtilityGioco.GAMEOVER.getLarghezza(),
+		        UtilityGioco.GAMEOVER.getAltezza());
+		textAlign(CENTER);
+		this.text(
+		        UtilityGioco.SCRITTAGAMEOVER.getDesc(),
+		        UtilityGioco.SCRITTAGAMEOVER.getPosX(),
+		        UtilityGioco.SCRITTAGAMEOVER.getPosY());
+		text("SI", UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY());
+		text("NO", UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY());
+		if (hover(UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY(), UtilityGioco.SI.getLarghezza(), UtilityGioco.SI.getAltezza()))
+		{
+			redraw();
+		} else if (hover(UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY(), UtilityGioco.NO.getLarghezza(), UtilityGioco.NO.getAltezza()))
+		{
+			exit();
+		}
+	}
+
+	private boolean hover(int x, int y, int width, int height)
+	{
+		if (this.mouseX >= x && this.mouseX <= x + width &&
+		        this.mouseY >= y && this.mouseY <= y + height)
+		{
+			return true;
+		} else
+		{
+			return false;
 		}
 	}
 
