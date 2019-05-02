@@ -118,7 +118,7 @@ public class Tetris extends PApplet
 			boolean bRet = true;
 
 			this.drawTavoloDaGioco();
-			this.drawSatistiche();
+			this.drawStatistiche();
 			// this.ps.addParticle();
 			// this.ps.run();
 			Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
@@ -175,7 +175,7 @@ public class Tetris extends PApplet
 		}
 		else
 		{
-			p = p + 1; // incremento le statisriche
+			p = p + 1; // incremento le statistiche
 		}
 		this.statistiche.put(this.mattoncinoCasuale.getMattoncino(), p);
 	}
@@ -193,7 +193,7 @@ public class Tetris extends PApplet
 		this.popMatrix();
 	}
 
-	public void drawSatistiche()
+	public void drawStatistiche()
 	{
 		int cont = 1;
 
@@ -212,6 +212,11 @@ public class Tetris extends PApplet
 		}
 
 		this.popMatrix();
+	}
+
+	private void drawBarraStatistica()
+	{
+		int incremento = 0;
 	}
 
 	private void drawTavoloDaGioco()
