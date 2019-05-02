@@ -3,6 +3,7 @@ package it.raffomafr.tetris.game;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -36,7 +37,18 @@ public class Tetris extends PApplet
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
+	}
 
+	public void azzeraStatistiche()
+	{
+		this.statistiche = new HashMap<>();
+		this.statistiche.put(MattonciniString.T, new Integer(0));
+		this.statistiche.put(MattonciniString.I, new Integer(0));
+		this.statistiche.put(MattonciniString.L, new Integer(0));
+		this.statistiche.put(MattonciniString.J, new Integer(0));
+		this.statistiche.put(MattonciniString.O, new Integer(0));
+		this.statistiche.put(MattonciniString.S, new Integer(0));
+		this.statistiche.put(MattonciniString.Z, new Integer(0));
 	}
 
 	public void generaPuntiHeader(int i)
@@ -166,10 +178,6 @@ public class Tetris extends PApplet
 			p = p + 1; // incremento le statisriche
 		}
 		this.statistiche.put(this.mattoncinoCasuale.getMattoncino(), p);
-		// System.out.println("***************");
-		// this.statistiche.entrySet().stream().forEach(k ->
-		// System.out.println(k.getKey().getDesc() + ": " + k.getValue()));
-
 	}
 
 	public void drawPunteggio()
@@ -187,6 +195,8 @@ public class Tetris extends PApplet
 
 	public void drawSatistiche()
 	{
+		int cont = 1;
+
 		this.pushMatrix();
 		this.fill(0, 0, 0);
 		this.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Sketch.LARGHEZZA_STATISTICHE, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
@@ -194,53 +204,11 @@ public class Tetris extends PApplet
 		this.fill(255);
 		this.textAlign(PConstants.LEFT);
 		this.textFont(this.createFont("Arial", 32, true), 20);
-		if (this.statistiche.get(MattonciniString.I) != null)
-		{
-			this.text(this.statistiche.get(MattonciniString.I), Costanti.Sketch.LARGHEZZA + 50, 400);
 
-		}
-		else
+		Set<MattonciniString> mattoncini = this.statistiche.keySet();
+		for (MattonciniString m : mattoncini)
 		{
-			this.text(0, Costanti.Sketch.LARGHEZZA + 50, 400);
-		}
-
-		if (this.statistiche.get(MattonciniString.L) != null)
-		{
-			this.text(this.statistiche.get(MattonciniString.L), Costanti.Sketch.LARGHEZZA + 100, 400);
-		}
-		else
-		{
-			this.text(0, Costanti.Sketch.LARGHEZZA + 100, 400);
-		}
-
-		if (this.statistiche.get(MattonciniString.T) != null)
-		{
-			this.text(this.statistiche.get(MattonciniString.T), Costanti.Sketch.LARGHEZZA + 150, 400);
-
-		}
-		else
-		{
-			this.text(0, Costanti.Sketch.LARGHEZZA + 150, 400);
-		}
-
-		if (this.statistiche.get(MattonciniString.S) != null)
-		{
-			this.text(this.statistiche.get(MattonciniString.S), Costanti.Sketch.LARGHEZZA + 200, 400);
-
-		}
-		else
-		{
-			this.text(0, Costanti.Sketch.LARGHEZZA + 200, 400);
-		}
-
-		if (this.statistiche.get(MattonciniString.Z) != null)
-		{
-			this.text(this.statistiche.get(MattonciniString.Z), Costanti.Sketch.LARGHEZZA + 250, 400);
-
-		}
-		else
-		{
-			this.text(0, Costanti.Sketch.LARGHEZZA + 250, 400);
+			this.text(this.statistiche.get(m), Costanti.Sketch.LARGHEZZA + 50 * cont++, 400);
 		}
 
 		this.popMatrix();
@@ -297,6 +265,7 @@ public class Tetris extends PApplet
 	@Override
 	public void setup()
 	{
+		azzeraStatistiche();
 		PropertyConfigurator.configure("log4j.properties");
 		cursor(CROSS);
 		GestioneBottoni.getInstance().setPa(this);
@@ -304,7 +273,6 @@ public class Tetris extends PApplet
 		GestioneBottoni.getInstance().addBottone(BottoniGioco.NO);
 
 		this.gameOver = false;
-		this.statistiche = new HashMap<>();
 		numRigheAbbattuteTotali = 0;
 
 		// this.ps = new ParticleSystem(new PVector(this.width / 2, 50), this);
@@ -320,13 +288,9 @@ public class Tetris extends PApplet
 
 		this.mattoncinoCasuale = tetris.generaMattoncino();
 		this.prossimoMattoncinoCasuale = tetris.generaMattoncino();
-		// this.prossimoMattoncinoCasuale.info();
 
 		this.imageMode(CORNER);
 		this.drawTavoloDaGioco();
-
-		// this.drawGriglia();
-
 	}
 
 	private void caricaSound()

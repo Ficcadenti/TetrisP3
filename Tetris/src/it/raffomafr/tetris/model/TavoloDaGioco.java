@@ -54,6 +54,16 @@ public class TavoloDaGioco
 		this.lista.add(MattoncinoT.class);// 6
 	}
 
+	public List<Class<?>> getLista()
+	{
+		return this.lista;
+	}
+
+	public void setLista(List<Class<?>> lista)
+	{
+		this.lista = lista;
+	}
+
 	public Mattoncino generaMattoncino()
 	{
 		Mattoncino clazz = null;
