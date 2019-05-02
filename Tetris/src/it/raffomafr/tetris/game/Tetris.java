@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import it.raffomafr.tetris.controller.GestioneBottoni;
+import it.raffomafr.tetris.enumeration.BottoniGioco;
 import it.raffomafr.tetris.enumeration.MattonciniString;
 import it.raffomafr.tetris.enumeration.UtilityGioco;
 import it.raffomafr.tetris.model.TavoloDaGioco;
@@ -98,16 +100,15 @@ public class Tetris extends PApplet
 	@Override
 	public void draw()
 	{
+		GestioneBottoni.getInstance().checkHover();
 		if (this.gameOver == false)
 		{
 			boolean bRet = true;
 
 			this.drawTavoloDaGioco();
 			this.drawSatistiche();
-
 			// this.ps.addParticle();
 			// this.ps.run();
-
 			Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
 			if (mattoncinoInProiezione != null)
 			{
@@ -178,7 +179,7 @@ public class Tetris extends PApplet
 		this.rect(0, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
 		this.fill(255);
 		this.textAlign(PConstants.LEFT);
-		this.textFont(this.createFont("Arial", 32, true), 20);
+		this.textFont(this.createFont("Arial", 32, true), Costanti.sizeFont);
 		this.text("Righe  : " + numRigheAbbattuteTotali, 50, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA + (Costanti.Sketch.ALTEZZA_FOOTER / 2) + 5);
 		this.generaPuntiFooter(20);
 		this.popMatrix();
@@ -297,6 +298,10 @@ public class Tetris extends PApplet
 	public void setup()
 	{
 		PropertyConfigurator.configure("log4j.properties");
+		cursor(CROSS);
+		GestioneBottoni.getInstance().setPa(this);
+		GestioneBottoni.getInstance().addBottone(BottoniGioco.SI);
+		GestioneBottoni.getInstance().addBottone(BottoniGioco.NO);
 
 		this.gameOver = false;
 		this.statistiche = new HashMap<>();
@@ -369,32 +374,18 @@ public class Tetris extends PApplet
 		this.filter(GRAY);
 		this.imageMode(CENTER);
 		this.image(this.loadImage(UtilityGioco.GAMEOVER.getDesc(), UtilityGioco.GAMEOVER.getEstensione()), UtilityGioco.GAMEOVER.getPosX(), UtilityGioco.GAMEOVER.getPosY(), UtilityGioco.GAMEOVER.getLarghezza(), UtilityGioco.GAMEOVER.getAltezza());
-		this.textAlign(CENTER);
-		this.text(UtilityGioco.SCRITTAGAMEOVER.getDesc(), UtilityGioco.SCRITTAGAMEOVER.getPosX(), UtilityGioco.SCRITTAGAMEOVER.getPosY());
-		this.text("SI", UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY());
-		this.text("NO", UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY());
-		if (this.hover(UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY(), UtilityGioco.SI.getLarghezza(), UtilityGioco.SI.getAltezza()))
-		{
-			log.info("ricomincia");
-			this.setup();
-		}
-		else if (this.hover(UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY(), UtilityGioco.NO.getLarghezza(), UtilityGioco.NO.getAltezza()))
-		{
-			log.info("esci");
-			this.exit();
-		}
+		centraTesto(BottoniGioco.SCRITTAGAMEOVER);
+		centraTesto(BottoniGioco.SI);
+		centraTesto(BottoniGioco.NO);
+		GestioneBottoni.getInstance().sceltaGameOver();
 	}
 
-	private boolean hover(int x, int y, int width, int height)
+	private void centraTesto(BottoniGioco testo)
 	{
-		if ((this.mouseX >= x) && (this.mouseX <= (x + width)) && (this.mouseY >= y) && (this.mouseY <= (y + height)))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		this.noFill();
+		stroke(255);
+		this.rect(testo.getPosX(), testo.getPosY(), testo.getLarghezza(), testo.getAltezza());
+		this.text(testo.getDesc(), testo.getPosX() + (testo.getLarghezza() - textWidth(testo.getDesc())) / 2, testo.getPosY() + ((testo.getAltezza() + Costanti.sizeFont) / 2));
 	}
 
 	private void pausa()

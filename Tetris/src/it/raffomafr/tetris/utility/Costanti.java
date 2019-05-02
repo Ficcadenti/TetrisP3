@@ -23,4 +23,6 @@ public class Costanti
 		public static final int	ALTEZZA					= TavoloDaGioco.ALTEZZA * ALTEZZA_CELLA;
 	}
 
+	public static float sizeFont = 20;
+
 }

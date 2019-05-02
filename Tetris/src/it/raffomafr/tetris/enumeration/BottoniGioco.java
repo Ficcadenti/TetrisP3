@@ -2,12 +2,11 @@ package it.raffomafr.tetris.enumeration;
 
 import it.raffomafr.tetris.utility.Costanti;
 
-public enum UtilityGioco
+public enum BottoniGioco
 {
 
-	PAUSA("pausa.png", "png", (Costanti.Sketch.LARGHEZZA / 2) - 30, (Costanti.Sketch.ALTEZZA / 2) - 15, 20, 20),
-	SCRITTAPAUSA("pausa", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 0, 0),
-	GAMEOVER("gameover.png", "png", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 400, 400),
+	SI("SI", "", UtilityGioco.SCRITTAGAMEOVER.getPosX() - UtilityGioco.SCRITTAGAMEOVER.getPosX() / 2, UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50),
+	NO("NO", "", UtilityGioco.SCRITTAGAMEOVER.getPosX() + UtilityGioco.SCRITTAGAMEOVER.getLarghezza() / 2, UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50),
 	SCRITTAGAMEOVER("VUOI RICOMINCIARE ?", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0);
 
 	private String	desc;
@@ -17,7 +16,7 @@ public enum UtilityGioco
 	private int		larghezza;
 	private int		altezza;
 
-	private UtilityGioco(String desc, String estensione, int posX, int posY, int larghezza, int altezza)
+	private BottoniGioco(String desc, String estensione, int posX, int posY, int larghezza, int altezza)
 	{
 		this.desc = desc;
 		this.estensione = estensione;
