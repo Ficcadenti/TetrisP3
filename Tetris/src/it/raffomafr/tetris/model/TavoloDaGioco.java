@@ -20,8 +20,8 @@ import processing.core.PApplet;
 
 public class TavoloDaGioco
 {
-	private static final Logger		log	= Logger.getLogger(TavoloDaGioco.class);
-	private static TavoloDaGioco	istanza;
+	private static final Logger		log		= Logger.getLogger(TavoloDaGioco.class);
+	private static TavoloDaGioco	istanza	= null;
 	private int						altezza;
 	private int						larghezza;
 	private int[][]					matrice;
