@@ -34,7 +34,7 @@ public class Tetris extends PApplet
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
-		PropertyConfigurator.configure("log4j.properties");
+
 	}
 
 	public void generaPuntiHeader(int i)
@@ -124,7 +124,7 @@ public class Tetris extends PApplet
 			if (bRet == false)
 			{
 
-				this.drawSatistiche();
+				// this.drawSatistiche();
 				this.calcolaStatistiche();
 
 				if (this.mattoncinoCasuale.getPosy() == 0)
@@ -296,6 +296,8 @@ public class Tetris extends PApplet
 	@Override
 	public void setup()
 	{
+		PropertyConfigurator.configure("log4j.properties");
+
 		this.gameOver = false;
 		this.statistiche = new HashMap<>();
 		numRigheAbbattuteTotali = 0;
@@ -312,10 +314,10 @@ public class Tetris extends PApplet
 		tetris.setPa(this);
 
 		this.mattoncinoCasuale = tetris.generaMattoncino();
-
 		this.prossimoMattoncinoCasuale = tetris.generaMattoncino();
 		// this.prossimoMattoncinoCasuale.info();
 
+		this.imageMode(CORNER);
 		this.drawTavoloDaGioco();
 
 		// this.drawGriglia();
@@ -363,23 +365,18 @@ public class Tetris extends PApplet
 	public void gameOver()
 	{
 		this.gameOver = true;
-		// this.noLoop(); // <---se teniamo noLoop non possiamo controllare il mouse :-(
 		this.fill(255);
+		this.filter(GRAY);
 		this.imageMode(CENTER);
 		this.image(this.loadImage(UtilityGioco.GAMEOVER.getDesc(), UtilityGioco.GAMEOVER.getEstensione()), UtilityGioco.GAMEOVER.getPosX(), UtilityGioco.GAMEOVER.getPosY(), UtilityGioco.GAMEOVER.getLarghezza(), UtilityGioco.GAMEOVER.getAltezza());
 		this.textAlign(CENTER);
 		this.text(UtilityGioco.SCRITTAGAMEOVER.getDesc(), UtilityGioco.SCRITTAGAMEOVER.getPosX(), UtilityGioco.SCRITTAGAMEOVER.getPosY());
 		this.text("SI", UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY());
 		this.text("NO", UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY());
-		log.info("SI:" + UtilityGioco.SI.getPosX());
-		log.info("SI:" + UtilityGioco.SI.getPosY());
-		log.info("SI:" + UtilityGioco.SI.getAltezza());
-		log.info("SI:" + UtilityGioco.SI.getLarghezza());
 		if (this.hover(UtilityGioco.SI.getPosX(), UtilityGioco.SI.getPosY(), UtilityGioco.SI.getLarghezza(), UtilityGioco.SI.getAltezza()))
 		{
 			log.info("ricomincia");
 			this.setup();
-			// this.redraw();
 		}
 		else if (this.hover(UtilityGioco.NO.getPosX(), UtilityGioco.NO.getPosY(), UtilityGioco.NO.getLarghezza(), UtilityGioco.NO.getAltezza()))
 		{
@@ -390,7 +387,6 @@ public class Tetris extends PApplet
 
 	private boolean hover(int x, int y, int width, int height)
 	{
-		// log.info(this.mouseX + "," + this.mouseY);
 		if ((this.mouseX >= x) && (this.mouseX <= (x + width)) && (this.mouseY >= y) && (this.mouseY <= (y + height)))
 		{
 			return true;
