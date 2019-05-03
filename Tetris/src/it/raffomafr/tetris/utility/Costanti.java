@@ -25,10 +25,10 @@ public class Costanti
 
 	public class Statistiche
 	{
-		public static final int	LARGHEZZA_STATISTICHE	= 400;
-		public static final int	INTERVALLO_BARRETTE		= 50;
-		public static final int	DELTA_BARRETTA			= 10;
-		public static final int	ALTEZZA					= Sketch.ALTEZZA;
+		public static final int	LARGHEZZA			= 400;
+		public static final int	ALTEZZA				= Sketch.ALTEZZA;
+		public static final int	INTERVALLO_BARRETTE	= 50;
+		public static final int	DELTA_BARRETTA		= 10;
 
 	}
 

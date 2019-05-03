@@ -74,11 +74,19 @@ public class Tetris extends PApplet
 		{
 			this.stroke(this.random(255), this.random(255), this.random(255));
 			this.strokeWeight(this.random(0, 4));
-			this.point(Costanti.Sketch.LARGHEZZA + this.random(0, Costanti.Statistiche.LARGHEZZA_STATISTICHE), this.random(0, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER));
+			this.point(Costanti.Sketch.LARGHEZZA + this.random(0, Costanti.Statistiche.LARGHEZZA), this.random(0, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER));
 		}
 		this.popMatrix();
 		this.stroke(0, 0, 0);
 		this.strokeWeight(1);
+	}
+
+	public void drawFooter()
+	{
+		this.pushMatrix();
+		this.fill(0, 0, 0);
+		this.rect(0, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.popMatrix();
 	}
 
 	public void generaPuntiFooter(int i)
@@ -115,6 +123,7 @@ public class Tetris extends PApplet
 	public void draw()
 	{
 		GestioneBottoni.getInstance().checkHover();
+		this.drawFooter();
 		if (this.gameOver == false)
 		{
 			boolean bRet = true;
@@ -138,7 +147,6 @@ public class Tetris extends PApplet
 
 			if (bRet == false)
 			{
-
 				// this.drawSatistiche();
 				this.calcolaStatistiche();
 
@@ -200,11 +208,14 @@ public class Tetris extends PApplet
 		int cont = 1;
 
 		this.pushMatrix();
-		this.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Statistiche.LARGHEZZA_STATISTICHE, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.fill(0, 0, 0);
+		this.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		// this.generaPuntiStatistiche(20);
+		this.fill(255);
+
 		Set<MattonciniString> mattoncini = this.statistiche.keySet();
 		for (MattonciniString m : mattoncini)
 		{
-
 			try
 			{
 				this.img_stat = (PImage) mapTetrisImg.get(m.getTipo()).clone();
@@ -213,7 +224,7 @@ public class Tetris extends PApplet
 			}
 			catch (CloneNotSupportedException e)
 			{
-				log.info("Non posso clonare " + m.getDesc());
+				log.info(e.getMessage(), e);
 			}
 			cont++;
 		}
@@ -251,7 +262,7 @@ public class Tetris extends PApplet
 	@Override
 	public void settings()
 	{
-		this.size(Costanti.Sketch.LARGHEZZA + Costanti.Statistiche.LARGHEZZA_STATISTICHE, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.size(Costanti.Sketch.LARGHEZZA + Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
 	}
 
 	public void caricaImg() // non mi piace, ma per velocit� (contro ogni buon proposit) lo faccio:)
@@ -510,7 +521,7 @@ public class Tetris extends PApplet
 				}
 			}
 		}
-		this.generaPuntiHeader(20);
+		// this.generaPuntiHeader(20);
 		this.popMatrix();
 	}
 
