@@ -5,9 +5,10 @@ import it.raffomafr.tetris.utility.Costanti;
 public enum BottoniGioco
 {
 
-	SI("SI", "", UtilityGioco.SCRITTAGAMEOVER.getPosX() - UtilityGioco.SCRITTAGAMEOVER.getPosX() / 2, UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50),
-	NO("NO", "", UtilityGioco.SCRITTAGAMEOVER.getPosX() + UtilityGioco.SCRITTAGAMEOVER.getLarghezza() + 50, UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50),
-	SCRITTAGAMEOVER("VUOI RICOMINCIARE ?", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0);
+	SI("SI", "", UtilityGioco.SCRITTAGAMEOVER.getPosX() - UtilityGioco.SCRITTAGAMEOVER.getPosX() / 2,
+			UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50,
+			50), NO("NO", "", 350, UtilityGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50), SCRITTAGAMEOVER(
+					"VUOI RICOMINCIARE ?", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0);
 
 	private String	desc;
 	private String	estensione;

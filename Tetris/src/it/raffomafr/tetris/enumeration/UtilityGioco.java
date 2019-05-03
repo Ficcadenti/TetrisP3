@@ -5,22 +5,22 @@ import it.raffomafr.tetris.utility.Costanti;
 public enum UtilityGioco
 {
 
-	PAUSA("pausa.png", "png", (Costanti.Sketch.LARGHEZZA / 2) - 30, (Costanti.Sketch.ALTEZZA / 2) - 15, 20, 20),
-	SCRITTAPAUSA("pausa", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 0, 0),
-	GAMEOVER("gameover.png", "png", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 400, 400),
-	SCRITTAGAMEOVER("VUOI RICOMINCIARE ?", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0);
+	PAUSA("pausa.png", "png", (Costanti.Sketch.LARGHEZZA / 2) - 30, (Costanti.Sketch.ALTEZZA / 2) - 15, 20,
+			20), SCRITTAPAUSA("pausa", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 0, 0), GAMEOVER(
+					"gameOver/gameover.png", "png", 60, 130, 400, 400), SCRITTAGAMEOVER("VUOI RICOMINCIARE ?", "",
+							Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0);
 
 	private String	desc;
-	private String	estensione;
+	private String	info;
 	private int		posX;
 	private int		posY;
 	private int		larghezza;
 	private int		altezza;
 
-	private UtilityGioco(String desc, String estensione, int posX, int posY, int larghezza, int altezza)
+	private UtilityGioco(String desc, String info, int posX, int posY, int larghezza, int altezza)
 	{
 		this.desc = desc;
-		this.estensione = estensione;
+		this.info = info;
 		this.posX = posX;
 		this.posY = posY;
 		this.larghezza = larghezza;
@@ -39,12 +39,12 @@ public enum UtilityGioco
 
 	public String getEstensione()
 	{
-		return this.estensione;
+		return this.info;
 	}
 
 	public void setEstensione(String estensione)
 	{
-		this.estensione = estensione;
+		this.info = estensione;
 	}
 
 	public int getPosX()

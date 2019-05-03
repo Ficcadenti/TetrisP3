@@ -2,6 +2,7 @@ package it.raffomafr.tetris.utility;
 
 public class Costanti
 {
+	public static float sizeFont = 15;
 
 	public class TavoloDaGioco
 	{
@@ -13,16 +14,33 @@ public class Costanti
 
 	public class Sketch
 	{
-		public static final int	LARGHEZZA_STATISTICHE	= 400;
-		public static final int	ALTEZZA_HEADER			= 100;
-		public static final int	ALTEZZA_FOOTER			= 50;
-		public static final int	LARGHEZZA_CELLA			= 30;
-		public static final int	ALTEZZA_CELLA			= 30;
-		public static final int	FRAME_LIVELLO_0			= 30;
-		public static final int	LARGHEZZA				= TavoloDaGioco.LARGHEZZA * LARGHEZZA_CELLA;
-		public static final int	ALTEZZA					= TavoloDaGioco.ALTEZZA * ALTEZZA_CELLA;
+		public static final int	ALTEZZA_HEADER	= 100;
+		public static final int	ALTEZZA_FOOTER	= 50;
+		public static final int	LARGHEZZA_CELLA	= 30;
+		public static final int	ALTEZZA_CELLA	= 30;
+		public static final int	FRAME_LIVELLO_0	= 30;
+		public static final int	LARGHEZZA		= TavoloDaGioco.LARGHEZZA * LARGHEZZA_CELLA;
+		public static final int	ALTEZZA			= TavoloDaGioco.ALTEZZA * ALTEZZA_CELLA;
 	}
 
-	public static float sizeFont = 20;
+	public class Statistiche
+	{
+		public static final int	LARGHEZZA_STATISTICHE	= 400;
+		public static final int	INTERVALLO_BARRETTE		= 50;
+		public static final int	DELTA_BARRETTA			= 10;
+		public static final int	ALTEZZA					= Sketch.ALTEZZA;
+
+	}
+
+	public class RigheAbbattute
+	{
+		public static final String	DESC			= "Righe Abbattute : ";
+		public static final int		POS_X			= 540;
+		public static final int		POS_Y			= 200;
+		public static final int		POS_X_BARRA		= 540;
+		public static final int		POS_Y_BARRA		= 150;
+		public static final int		DELTA_BARRETTA	= 10;
+
+	}
 
 }
