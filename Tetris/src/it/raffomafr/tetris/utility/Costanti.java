@@ -29,18 +29,11 @@ public class Costanti
 		public static final int	ALTEZZA				= Sketch.ALTEZZA;
 		public static final int	INTERVALLO_BARRETTE	= 50;
 		public static final int	DELTA_BARRETTA		= 10;
-
 	}
 
 	public class RigheAbbattute
 	{
-		public static final String	DESC			= "Righe Abbattute : ";
-		public static final int		POS_X			= 540;
-		public static final int		POS_Y			= 200;
-		public static final int		POS_X_BARRA		= 540;
-		public static final int		POS_Y_BARRA		= 150;
-		public static final int		DELTA_BARRETTA	= 10;
-
+		public static final int DELTA_BARRETTA = 10;
 	}
 
 }

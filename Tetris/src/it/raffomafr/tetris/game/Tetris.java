@@ -10,8 +10,9 @@ import org.apache.log4j.PropertyConfigurator;
 
 import it.raffomafr.tetris.controller.GestioneBottoni;
 import it.raffomafr.tetris.enumeration.BottoniGioco;
+import it.raffomafr.tetris.enumeration.ImmaginiGioco;
+import it.raffomafr.tetris.enumeration.LabelGioco;
 import it.raffomafr.tetris.enumeration.MattonciniString;
-import it.raffomafr.tetris.enumeration.UtilityGioco;
 import it.raffomafr.tetris.model.TavoloDaGioco;
 import it.raffomafr.tetris.model.mattoncini.Mattoncino;
 import it.raffomafr.tetris.utility.Costanti;
@@ -34,7 +35,7 @@ public class Tetris extends PApplet
 	private ParticleSystem					ps;
 	private Map<MattonciniString, Integer>	statistiche					= null;
 	private PImage							img_stat;
-	private PImage							img_righe;
+	private PImage							img_righe					= null;
 
 	public static void main(String[] args)
 	{
@@ -194,12 +195,11 @@ public class Tetris extends PApplet
 	public void drawPunteggio()
 	{
 		this.pushMatrix();
-		this.img_righe = this.loadImage("mattoncinoBarra.jpg");
 		this.img_righe.resize((this.img_righe.width / 2) + (Costanti.RigheAbbattute.DELTA_BARRETTA * numRigheAbbattuteTotali), this.img_righe.height);
-		this.image(this.img_righe, Costanti.RigheAbbattute.POS_X_BARRA, Costanti.RigheAbbattute.POS_Y_BARRA);
+		this.image(this.img_righe, ImmaginiGioco.RIGHEABBATTUTE.getPosX(), ImmaginiGioco.RIGHEABBATTUTE.getPosY());
 		this.fill(255);
 		this.textAlign(PConstants.LEFT);
-		this.text(Costanti.RigheAbbattute.DESC + numRigheAbbattuteTotali, Costanti.RigheAbbattute.POS_X, Costanti.RigheAbbattute.POS_Y);
+		this.text(LabelGioco.RIGHEABBATTUTE.getDesc() + numRigheAbbattuteTotali, LabelGioco.RIGHEABBATTUTE.getPosX(), LabelGioco.RIGHEABBATTUTE.getPosY());
 		this.popMatrix();
 	}
 
@@ -293,6 +293,8 @@ public class Tetris extends PApplet
 		this.gameOver = false;
 		numRigheAbbattuteTotali = 0;
 
+		this.img_righe = this.loadImage(ImmaginiGioco.RIGHEABBATTUTE.getDesc());
+
 		// this.ps = new ParticleSystem(new PVector(this.width / 2, 50), this);
 		this.background(20, 20, 20);
 
@@ -356,13 +358,14 @@ public class Tetris extends PApplet
 		this.noStroke();
 		this.rect(510, 0, this.width, this.height);
 		this.gameOver = true;
-		this.image(this.loadImage(UtilityGioco.GAMEOVER.getDesc(), UtilityGioco.GAMEOVER.getEstensione()), UtilityGioco.GAMEOVER.getPosX(), UtilityGioco.GAMEOVER.getPosY(), UtilityGioco.GAMEOVER.getLarghezza(), UtilityGioco.GAMEOVER.getAltezza());
+		this.image(this.loadImage(ImmaginiGioco.GAMEOVER.getDesc(), ImmaginiGioco.GAMEOVER.getEstensione()), ImmaginiGioco.GAMEOVER.getPosX(), ImmaginiGioco.GAMEOVER.getPosY(), ImmaginiGioco.GAMEOVER.getLarghezza(),
+				ImmaginiGioco.GAMEOVER.getAltezza());
 		this.fill(0);
 		this.rect(110, 500, 300, 150, 20);
 		this.fill(255, 255, 0);
-		this.centraTesto(BottoniGioco.SCRITTAGAMEOVER);
-		this.centraTesto(BottoniGioco.SI);
-		this.centraTesto(BottoniGioco.NO);
+		this.centraTestoLabel(LabelGioco.SCRITTAGAMEOVER);
+		this.centraTestoBtn(BottoniGioco.SI);
+		this.centraTestoBtn(BottoniGioco.NO);
 		this.fill(255);
 		this.statisticheGameOver();
 		GestioneBottoni.getInstance().sceltaGameOver();
@@ -371,7 +374,7 @@ public class Tetris extends PApplet
 
 	private void statisticheGameOver()
 	{
-		this.text("Hai totalizzato : ", 540, 250);
+		this.text("Hai totalizzato : ", 540, 280);
 		this.image(this.loadImage("gameOver/mattoncino_i.png"), 540, 300, 50, 20);
 		this.text(this.statistiche.get(MattonciniString.I), 600, 320);
 		this.image(this.loadImage("gameOver/mattoncino_l.png"), 540, 350, 50, 30);
@@ -388,7 +391,15 @@ public class Tetris extends PApplet
 		this.text(this.statistiche.get(MattonciniString.Z), 600, 620);
 	}
 
-	private void centraTesto(BottoniGioco testo)
+	private void centraTestoLabel(LabelGioco testo)
+	{
+		this.noFill();
+		this.text(testo.getDesc(), testo.getPosX() + ((testo.getLarghezza() - this.textWidth(testo.getDesc())) / 2), testo.getPosY() + ((testo.getAltezza() + Costanti.sizeFont) / 2));
+		this.stroke(255);
+		this.rect(testo.getPosX(), testo.getPosY(), testo.getLarghezza(), testo.getAltezza());
+	}
+
+	private void centraTestoBtn(BottoniGioco testo)
 	{
 		this.noFill();
 		this.text(testo.getDesc(), testo.getPosX() + ((testo.getLarghezza() - this.textWidth(testo.getDesc())) / 2), testo.getPosY() + ((testo.getAltezza() + Costanti.sizeFont) / 2));
@@ -406,8 +417,8 @@ public class Tetris extends PApplet
 				this.noLoop();
 				this.filter(GRAY);
 				this.fill(255);
-				this.image(this.loadImage(UtilityGioco.PAUSA.getDesc(), UtilityGioco.PAUSA.getEstensione()), UtilityGioco.PAUSA.getPosX(), UtilityGioco.PAUSA.getPosY(), UtilityGioco.PAUSA.getLarghezza(), UtilityGioco.PAUSA.getAltezza());
-				this.text(UtilityGioco.SCRITTAPAUSA.getDesc(), UtilityGioco.SCRITTAPAUSA.getPosX(), UtilityGioco.SCRITTAPAUSA.getPosY());
+				this.image(this.loadImage(ImmaginiGioco.PAUSA.getDesc(), ImmaginiGioco.PAUSA.getEstensione()), ImmaginiGioco.PAUSA.getPosX(), ImmaginiGioco.PAUSA.getPosY(), ImmaginiGioco.PAUSA.getLarghezza(), ImmaginiGioco.PAUSA.getAltezza());
+				this.text(LabelGioco.SCRITTAPAUSA.getDesc(), LabelGioco.SCRITTAPAUSA.getPosX(), LabelGioco.SCRITTAPAUSA.getPosY());
 			}
 			else
 			{

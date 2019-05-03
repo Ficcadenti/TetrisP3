@@ -2,23 +2,23 @@ package it.raffomafr.tetris.enumeration;
 
 import it.raffomafr.tetris.utility.Costanti;
 
-public enum BottoniGioco
+public enum LabelGioco
 {
-
-	SI("SI", "", LabelGioco.SCRITTAGAMEOVER.getPosX() - (LabelGioco.SCRITTAGAMEOVER.getPosX() / 2), LabelGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50),
-	NO("NO", "", 350, LabelGioco.SCRITTAGAMEOVER.getPosY() + 50, 50, 50);
+	SCRITTAPAUSA("Pausa", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA / 2, 0, 0),
+	SCRITTAGAMEOVER("Vuoi ricominciare ?", "", Costanti.Sketch.LARGHEZZA / 2, Costanti.Sketch.ALTEZZA - 100, 0, 0),
+	RIGHEABBATTUTE("Righe Abbattute : ", "", 540, 130, 0, 0);
 
 	private String	desc;
-	private String	estensione;
+	private String	info;
 	private int		posX;
 	private int		posY;
 	private int		larghezza;
 	private int		altezza;
 
-	private BottoniGioco(String desc, String estensione, int posX, int posY, int larghezza, int altezza)
+	private LabelGioco(String desc, String info, int posX, int posY, int larghezza, int altezza)
 	{
 		this.desc = desc;
-		this.estensione = estensione;
+		this.info = info;
 		this.posX = posX;
 		this.posY = posY;
 		this.larghezza = larghezza;
@@ -37,12 +37,12 @@ public enum BottoniGioco
 
 	public String getEstensione()
 	{
-		return this.estensione;
+		return this.info;
 	}
 
 	public void setEstensione(String estensione)
 	{
-		this.estensione = estensione;
+		this.info = estensione;
 	}
 
 	public int getPosX()
