@@ -10,6 +10,9 @@ factoryConfiguration.json
 *.class
 build/
 
+### Mac di Francesca ###
+.DS_Store
+
 ### Eclipse ###
 
 .metadata
