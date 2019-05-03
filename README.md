@@ -1,2 +1,7 @@
-# TetrisP3
-Tetris in P3...il nostro passatempo :) :))))))))
+<h2><strong> Repository per TetrisP3 Java/Processing3 </strong></h2>
+<br>
+<p>
+	Tetris in P3...il nostro passatempo :) :))))))))
+</p>
+
+<img src="images/tetris1.jpg" alt="Tetris" >
