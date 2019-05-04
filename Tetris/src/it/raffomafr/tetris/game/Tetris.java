@@ -1,7 +1,10 @@
 package it.raffomafr.tetris.game;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +32,7 @@ public class Tetris extends PApplet
 	private int								accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
 	private static final Logger				log							= Logger.getLogger(Tetris.class);
 	private static Map<Integer, PImage>		mapTetrisImg				= new HashMap<Integer, PImage>();
+	private static List<Mattoncino>			listMattonciniGameOver		= new ArrayList<>();
 	// private static SoundFile file;
 	private static int						numRigheAbbattuteTotali;
 	private boolean							gameOver					= false;
@@ -138,7 +142,7 @@ public class Tetris extends PApplet
 			{
 				this.drawProiezione(mattoncinoInProiezione);
 			}
-			this.drawMattoncino(this.mattoncinoCasuale);
+			this.drawMattoncinoNelTavolo(this.mattoncinoCasuale);
 			this.drawProssimoMattoncino(this.prossimoMattoncinoCasuale);
 
 			if ((this.frameCount % this.accellerazione) == 0)
@@ -265,17 +269,34 @@ public class Tetris extends PApplet
 		this.size(Costanti.Sketch.LARGHEZZA + Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
 	}
 
-	public void caricaImg() // non mi piace, ma per velocit� (contro ogni buon proposit) lo faccio:)
+	public void caricaImg()
 	{
 		mapTetrisImg = new HashMap<Integer, PImage>();
+		listMattonciniGameOver = new ArrayList<>();
+		List<Class<?>> listaMattoncini = TavoloDaGioco.getInstance().getLista();
+		int cont = 0;
+
+		for (Class<?> m : listaMattoncini)
+		{
+			try
+			{
+				Constructor<?> constructor = m.getConstructor(boolean.class);
+				Mattoncino clazz = (Mattoncino) constructor.newInstance(false);
+				clazz.setPa(this);
+				clazz.loadImg();
+				clazz.setPosx(18);
+				clazz.setPosy(5 + (cont * 2));
+				listMattonciniGameOver.add(clazz);
+				cont++;
+				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg());
+			}
+			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e)
+			{
+				log.info(e.getMessage(), e);
+			}
+		}
+
 		mapTetrisImg.put(new Integer(MattonciniString.MURO.getTipo()), this.loadImage(MattonciniString.MURO.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.T.getTipo()), this.loadImage(MattonciniString.T.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.I.getTipo()), this.loadImage(MattonciniString.I.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.L.getTipo()), this.loadImage(MattonciniString.L.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.J.getTipo()), this.loadImage(MattonciniString.J.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.O.getTipo()), this.loadImage(MattonciniString.O.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.S.getTipo()), this.loadImage(MattonciniString.S.getNomeImg()));
-		mapTetrisImg.put(new Integer(MattonciniString.Z.getTipo()), this.loadImage(MattonciniString.Z.getNomeImg()));
 		mapTetrisImg.put(new Integer(MattonciniString.PROIEZIONE.getTipo()), this.loadImage(MattonciniString.PROIEZIONE.getNomeImg()));
 	}
 
@@ -374,21 +395,16 @@ public class Tetris extends PApplet
 
 	private void statisticheGameOver()
 	{
-		this.text("Hai totalizzato : ", 540, 280);
-		this.image(this.loadImage("gameOver/mattoncino_i.png"), 540, 300, 50, 20);
-		this.text(this.statistiche.get(MattonciniString.I), 600, 320);
-		this.image(this.loadImage("gameOver/mattoncino_l.png"), 540, 350, 50, 30);
-		this.text(this.statistiche.get(MattonciniString.L), 600, 370);
-		this.image(this.loadImage("gameOver/mattoncino_j.png"), 540, 400, 50, 30);
-		this.text(this.statistiche.get(MattonciniString.J), 600, 420);
-		this.image(this.loadImage("gameOver/mattoncino_o.png"), 540, 450, 30, 30);
-		this.text(this.statistiche.get(MattonciniString.O), 600, 470);
-		this.image(this.loadImage("gameOver/mattoncino_s.png"), 540, 500, 50, 30);
-		this.text(this.statistiche.get(MattonciniString.S), 600, 520);
-		this.image(this.loadImage("gameOver/mattoncino_t.png"), 540, 550, 50, 30);
-		this.text(this.statistiche.get(MattonciniString.T), 600, 570);
-		this.image(this.loadImage("gameOver/mattoncino_z.png"), 540, 600, 50, 30);
-		this.text(this.statistiche.get(MattonciniString.Z), 600, 620);
+		this.text("Hai totalizzato : ", 540, 200);
+
+		int cont = 0;
+		for (Mattoncino m : listMattonciniGameOver)
+		{
+			cont++;
+			this.drawMattoncinoNelTavolo(m);
+			this.text(this.statistiche.get(m.getMattoncino()), 700, 320 + (cont * 50));
+
+		}
 	}
 
 	private void centraTestoLabel(LabelGioco testo)
@@ -478,7 +494,7 @@ public class Tetris extends PApplet
 
 	}
 
-	public void drawMattoncino(Mattoncino mattoncino)
+	public void drawMattoncinoNelTavolo(Mattoncino mattoncino)
 	{
 		int xPosM;
 		int yPosM;

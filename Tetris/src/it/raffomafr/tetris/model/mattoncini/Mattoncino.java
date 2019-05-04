@@ -24,6 +24,8 @@ public abstract class Mattoncino implements Cloneable
 	private int[][]				matrice;
 	private int					posx;
 	private int					posy;
+	private int					posxAssoluta;
+	private int					posyAssoluta;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException
@@ -85,6 +87,13 @@ public abstract class Mattoncino implements Cloneable
 
 	public Mattoncino(MattonciniString mattoncino)
 	{
+		this(mattoncino, true);
+	}
+
+	public Mattoncino(MattonciniString mattoncino, boolean flag)
+	{
+		int numeroRotazioniDx;
+
 		// setto il mattoncino
 		this.mattoncino = mattoncino;
 
@@ -92,7 +101,14 @@ public abstract class Mattoncino implements Cloneable
 		this.matrice = this.generaMatrice(mattoncino.getStringa(), mattoncino.getLarghezza(), mattoncino.getAltezza());
 
 		// genero una rotazione casuale
-		int numeroRotazioniDx = this.generaRotazioneIniziale();
+		if (flag == false)
+		{
+			numeroRotazioniDx = 0;
+		}
+		else
+		{
+			numeroRotazioniDx = this.generaRotazioneIniziale();
+		}
 
 		// numeroRotazioniDx = 0; // per test
 		// setto larghezza prima di rotazione
@@ -415,6 +431,26 @@ public abstract class Mattoncino implements Cloneable
 	public void setImg(PImage img)
 	{
 		this.img = img;
+	}
+
+	public int getPosxAssoluta()
+	{
+		return this.posxAssoluta;
+	}
+
+	public void setPosxAssoluta(int posxAssoluta)
+	{
+		this.posxAssoluta = posxAssoluta;
+	}
+
+	public int getPosyAssoluta()
+	{
+		return this.posyAssoluta;
+	}
+
+	public void setPosyAssoluta(int posyAssoluta)
+	{
+		this.posyAssoluta = posyAssoluta;
 	}
 
 }

@@ -14,4 +14,9 @@ public class MattoncinoI extends Mattoncino
 		super(mattoncino);
 	}
 
+	public MattoncinoI(boolean flag)
+	{
+		super(mattoncino, flag);
+	}
+
 }

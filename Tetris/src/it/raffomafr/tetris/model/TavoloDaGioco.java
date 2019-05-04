@@ -70,6 +70,7 @@ public class TavoloDaGioco
 		Random random = new Random();
 		int nMattoncino = random.nextInt(this.lista.size());
 		try
+
 		{
 			clazz = (Mattoncino) this.lista.get(nMattoncino).newInstance();
 			clazz.setPa(this.pa);
