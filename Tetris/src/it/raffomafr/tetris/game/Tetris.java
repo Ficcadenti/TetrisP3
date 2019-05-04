@@ -271,24 +271,32 @@ public class Tetris extends PApplet
 
 	public void caricaImg()
 	{
-		mapTetrisImg = new HashMap<Integer, PImage>();
-		listMattonciniGameOver = new ArrayList<>();
-		List<Class<?>> listaMattoncini = TavoloDaGioco.getInstance().getLista();
+		mapTetrisImg = new HashMap<Integer, PImage>(); // mappa che associa le immagini dei mattoncii al tipo es.: <MattoncinoI><PImage
+														// di mattoncinoI.jpg> utilizzata per disegnare i mattoncini sul tavolo da gioco
+		listMattonciniGameOver = new ArrayList<>(); // lista di mattoncini , utilizzata per disegnare i mattoncini al gameover,
+													// metto tutto il mattoncino, perchè mi serve anche la posx e posy
+		List<Class<?>> listaMattoncini = TavoloDaGioco.getInstance().getLista(); // prendo la lista delle classi dei mattoncini (MattoncinoI.class
+																					// MattoncinoL.class etc)
 		int cont = 0;
 
-		for (Class<?> m : listaMattoncini)
+		for (Class<?> m : listaMattoncini) // la giro
 		{
 			try
 			{
-				Constructor<?> constructor = m.getConstructor(boolean.class);
-				Mattoncino clazz = (Mattoncino) constructor.newInstance(false);
-				clazz.setPa(this);
-				clazz.loadImg();
-				clazz.setPosx(18);
-				clazz.setPosy(5 + (cont * 2));
-				listMattonciniGameOver.add(clazz);
+				Constructor<?> constructor = m.getConstructor(boolean.class); // cerco il costruttore con un argomento booleano (se non va in eccezzione vado
+																				// avanti)
+				Mattoncino clazz = (Mattoncino) constructor.newInstance(false); // istanzio il mattoncino chiamando il costruttore ad un argomento con argomento
+																				// false, mi serve per non generare la rotazione casuale
+				clazz.setPa(this);// passo il riferimento alla PApplet attuale, mi serve per invocare il metodo
+									// loadImage
+				clazz.loadImg(); // carico l'immagine
+				clazz.setPosx(18); // setto la posx
+				clazz.setPosy(5 + (cont * 2)); // setto la posy
+				listMattonciniGameOver.add(clazz); // Aggiungo il mattoncino creato alla lista dei mattoncini che usero in ganeover
+													// per il resoconto
 				cont++;
-				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg());
+				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg()); // come erà prima , utilizzata per le immagini dei mattoncini nel tavolo da
+																								// gioco.
 			}
 			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e)
 			{
