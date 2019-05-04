@@ -3,6 +3,8 @@ package it.raffomafr.tetris.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import it.raffomafr.tetris.enumeration.BottoniGioco;
 import processing.core.PApplet;
 
@@ -11,6 +13,7 @@ public class GestioneBottoni
 	private PApplet					pa;
 	private List<BottoniGioco>		listaBottoni	= new ArrayList();
 	private static GestioneBottoni	istanza			= null;
+	private static final Logger		log				= Logger.getLogger(GestioneBottoni.class);
 
 	private GestioneBottoni()
 	{
@@ -33,7 +36,7 @@ public class GestioneBottoni
 	public void sceltaGameOver()
 	{
 
-		String btnScelto = getBottonePremuto();
+		String btnScelto = this.getBottonePremuto();
 		if (btnScelto.equals(BottoniGioco.SI.getDesc()))
 		{
 			this.pa.setup();
@@ -50,7 +53,7 @@ public class GestioneBottoni
 		{
 			for (BottoniGioco b : this.listaBottoni)
 			{
-				if (hover(b))
+				if (this.hover(b))
 				{
 					return b.getDesc();
 				}
@@ -63,7 +66,7 @@ public class GestioneBottoni
 	{
 		boolean bRet = false;
 
-		if (this.pa.mouseX >= bottone.getPosX() && this.pa.mouseX <= (bottone.getPosX() + bottone.getLarghezza()) && this.pa.mouseY >= bottone.getPosY() && this.pa.mouseY <= (bottone.getPosY() + bottone.getAltezza()))
+		if ((this.pa.mouseX >= bottone.getPosX()) && (this.pa.mouseX <= (bottone.getPosX() + bottone.getLarghezza())) && (this.pa.mouseY >= bottone.getPosY()) && (this.pa.mouseY <= (bottone.getPosY() + bottone.getAltezza())))
 		{
 			bRet = true;
 		}
@@ -76,7 +79,7 @@ public class GestioneBottoni
 		boolean bHover = false;
 		for (BottoniGioco b : this.listaBottoni)
 		{
-			if (hover(b))
+			if (this.hover(b))
 			{
 				bHover = true;
 				break;

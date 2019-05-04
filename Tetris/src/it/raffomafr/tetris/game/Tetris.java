@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import it.raffomafr.tetris.controller.GestioneBottoni;
+import it.raffomafr.tetris.controller.Statistiche;
 import it.raffomafr.tetris.enumeration.BottoniGioco;
 import it.raffomafr.tetris.enumeration.ImmaginiGioco;
 import it.raffomafr.tetris.enumeration.LabelGioco;
@@ -26,34 +26,21 @@ import processing.core.PImage;
 public class Tetris extends PApplet
 {
 
-	private Mattoncino						mattoncinoCasuale;
-	private Mattoncino						prossimoMattoncinoCasuale	= null;
-	private int								accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
-	private static final Logger				log							= Logger.getLogger(Tetris.class);
-	private static Map<Integer, PImage>		mapTetrisImg				= new HashMap<Integer, PImage>();
-	private static List<Mattoncino>			listMattonciniGameOver		= new ArrayList<>();
+	private Mattoncino					mattoncinoCasuale;
+	private Mattoncino					prossimoMattoncinoCasuale	= null;
+	private int							accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
+	private static final Logger			log							= Logger.getLogger(Tetris.class);
+	private static Map<Integer, PImage>	mapTetrisImg				= new HashMap<Integer, PImage>();
+	private static List<Mattoncino>		listMattonciniGameOver		= new ArrayList<>();
 	// private static SoundFile file;
-	private static int						numRigheAbbattuteTotali;
-	private boolean							gameOver					= false;
-	private Map<MattonciniString, Integer>	statistiche					= null;
-	private PImage							img_stat;
-	private PImage							img_righe					= null;
+	private static int					numRigheAbbattuteTotali;
+	private boolean						gameOver					= false;
+
+	private PImage						img_righe					= null;
 
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
-	}
-
-	public void azzeraStatistiche()
-	{
-		this.statistiche = new HashMap<>();
-		this.statistiche.put(MattonciniString.T, new Integer(0));
-		this.statistiche.put(MattonciniString.I, new Integer(0));
-		this.statistiche.put(MattonciniString.L, new Integer(0));
-		this.statistiche.put(MattonciniString.J, new Integer(0));
-		this.statistiche.put(MattonciniString.O, new Integer(0));
-		this.statistiche.put(MattonciniString.S, new Integer(0));
-		this.statistiche.put(MattonciniString.Z, new Integer(0));
 	}
 
 	public void generaPuntiHeader(int i)
@@ -132,9 +119,7 @@ public class Tetris extends PApplet
 			boolean bRet = true;
 
 			this.drawTavoloDaGioco();
-			this.drawStatistiche();
-			// this.ps.addParticle();
-			// this.ps.run();
+			Statistiche.getInstance().drawStatistiche();
 			Mattoncino mattoncinoInProiezione = this.calcolaProiezione();
 			if (mattoncinoInProiezione != null)
 			{
@@ -150,8 +135,7 @@ public class Tetris extends PApplet
 
 			if (bRet == false)
 			{
-				// this.drawSatistiche();
-				this.calcolaStatistiche();
+				Statistiche.getInstance().calcolaStatistiche(this.mattoncinoCasuale);
 
 				if (this.mattoncinoCasuale.getPosy() == 0)
 				{
@@ -180,20 +164,6 @@ public class Tetris extends PApplet
 		}
 	}
 
-	private void calcolaStatistiche()
-	{
-		Integer p = this.statistiche.get(this.mattoncinoCasuale.getMattoncino());
-		if (p == null)
-		{
-			p = new Integer(1);
-		}
-		else
-		{
-			p = p + 1; // incremento le statistiche
-		}
-		this.statistiche.put(this.mattoncinoCasuale.getMattoncino(), p);
-	}
-
 	public void drawPunteggio()
 	{
 		this.pushMatrix();
@@ -202,34 +172,6 @@ public class Tetris extends PApplet
 		this.fill(255);
 		this.textAlign(PConstants.LEFT);
 		this.text(LabelGioco.RIGHEABBATTUTE.getDesc() + numRigheAbbattuteTotali, LabelGioco.RIGHEABBATTUTE.getPosX(), LabelGioco.RIGHEABBATTUTE.getPosY());
-		this.popMatrix();
-	}
-
-	public void drawStatistiche()
-	{
-		int cont = 1;
-
-		this.pushMatrix();
-		this.fill(0, 0, 0);
-		this.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
-		// this.generaPuntiStatistiche(20);
-		this.fill(255);
-
-		Set<MattonciniString> mattoncini = this.statistiche.keySet();
-		for (MattonciniString m : mattoncini)
-		{
-			try
-			{
-				this.img_stat = (PImage) mapTetrisImg.get(m.getTipo()).clone();
-				this.img_stat.resize(this.img_stat.width, this.img_stat.height + (Costanti.Statistiche.DELTA_BARRETTA * this.statistiche.get(m)));
-				this.image(this.img_stat, (Costanti.Sketch.LARGHEZZA - 20) + (Costanti.Statistiche.INTERVALLO_BARRETTE * cont), Costanti.Statistiche.ALTEZZA - (Costanti.Statistiche.DELTA_BARRETTA * this.statistiche.get(m)));
-			}
-			catch (CloneNotSupportedException e)
-			{
-				log.info(e.getMessage(), e);
-			}
-			cont++;
-		}
 		this.popMatrix();
 	}
 
@@ -269,31 +211,24 @@ public class Tetris extends PApplet
 
 	public void caricaImg()
 	{
-		mapTetrisImg = new HashMap<Integer, PImage>(); // mappa che associa le immagini dei mattoncii al tipo es.: <MattoncinoI><PImage
-														// di mattoncinoI.jpg> utilizzata per disegnare i mattoncini sul tavolo da gioco
-		listMattonciniGameOver = new ArrayList<>(); // lista di mattoncini , utilizzata per disegnare i mattoncini al gameover,
-													// metto tutto il mattoncino, perchè mi serve anche la posx e posy
-		List<Class<?>> listaMattoncini = TavoloDaGioco.getInstance().getLista(); // prendo la lista delle classi dei mattoncini (MattoncinoI.class
-																					// MattoncinoL.class etc)
+		mapTetrisImg = new HashMap<Integer, PImage>();
+		listMattonciniGameOver = new ArrayList<>();
+		List<Class<?>> listaMattoncini = TavoloDaGioco.getInstance().getLista();
 		int cont = 0;
 
-		for (Class<?> m : listaMattoncini) // la giro
+		for (Class<?> m : listaMattoncini)
 		{
 			try
 			{
-				Constructor<?> constructor = m.getConstructor(boolean.class); // cerco il costruttore con un argomento booleano (se non va in eccezzione vado
-																				// avanti)
-				Mattoncino clazz = (Mattoncino) constructor.newInstance(false); // istanzio il mattoncino chiamando il costruttore ad un argomento con argomento
-																				// false, mi serve per non generare la rotazione casuale
-				clazz.setPa(this);// passo il riferimento alla PApplet attuale, mi serve per invocare il metodo
-									// loadImage
-				clazz.loadImg(); // carico l'immagine
+				Constructor<?> constructor = m.getConstructor(boolean.class);
+				Mattoncino clazz = (Mattoncino) constructor.newInstance(false);
+				clazz.setPa(this);
+				clazz.loadImg();
 				clazz.setAltezzaImg(20);
 				clazz.setLarghezzaImg(20);
-				clazz.setPosxAssoluta(550); // setto la posx
-				clazz.setPosyAssoluta(220 + (cont * 70)); // setto la posy
-				listMattonciniGameOver.add(clazz); // Aggiungo il mattoncino creato alla lista dei mattoncini che usero in ganeover
-													// per il resoconto
+				clazz.setPosxAssoluta(550);
+				clazz.setPosyAssoluta(220 + (cont * 70));
+				listMattonciniGameOver.add(clazz);
 				cont++;
 				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg()); // come erà prima , utilizzata per le immagini dei mattoncini nel tavolo da
 																								// gioco.
@@ -306,15 +241,19 @@ public class Tetris extends PApplet
 
 		mapTetrisImg.put(new Integer(MattonciniString.MURO.getTipo()), this.loadImage(MattonciniString.MURO.getNomeImg()));
 		mapTetrisImg.put(new Integer(MattonciniString.PROIEZIONE.getTipo()), this.loadImage(MattonciniString.PROIEZIONE.getNomeImg()));
+
+		Statistiche.getInstance().setMapTetrisImg(mapTetrisImg);
 	}
 
 	@Override
 	public void setup()
 	{
 		PropertyConfigurator.configure("log4j.properties");
-		this.textFont(this.createFont("Gugi-Regular.ttf", Costanti.sizeFont, true), Costanti.sizeFont);
-		this.azzeraStatistiche();
 		this.cursor(CROSS);
+		this.textFont(this.createFont("Gugi-Regular.ttf", Costanti.sizeFont, true), Costanti.sizeFont);
+
+		Statistiche.getInstance().setPa(this);
+
 		GestioneBottoni.getInstance().setPa(this);
 		GestioneBottoni.getInstance().addBottone(BottoniGioco.SI);
 		GestioneBottoni.getInstance().addBottone(BottoniGioco.NO);
@@ -324,7 +263,6 @@ public class Tetris extends PApplet
 
 		this.img_righe = this.loadImage(ImmaginiGioco.RIGHEABBATTUTE.getDesc());
 
-		// this.ps = new ParticleSystem(new PVector(this.width / 2, 50), this);
 		this.background(20, 20, 20);
 
 		this.caricaImg(); // carico le immagini base dei mattoncini
@@ -410,7 +348,7 @@ public class Tetris extends PApplet
 		{
 			cont++;
 			this.drawMattoncinoNelloSkatch(m);
-			this.text(this.statistiche.get(m.getMattoncino()), 700, 180 + (cont * 70));
+			this.text(Statistiche.getInstance().getStatistiche().get(m.getMattoncino()), 700, 180 + (cont * 70));
 
 		}
 	}
