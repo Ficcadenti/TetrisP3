@@ -22,19 +22,21 @@ import it.raffomafr.tetris.utility.Costanti;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;
+import processing.core.PVector;
 
-public class Tetris extends PApplet
+public class Tetris_pa extends PApplet
 {
 
 	private Mattoncino						mattoncinoCasuale;
 	private Mattoncino						prossimoMattoncinoCasuale	= null;
 	private int								accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
-	private static final Logger				log							= Logger.getLogger(Tetris.class);
+	private static final Logger				log							= Logger.getLogger(Tetris_pa.class);
 	private static Map<Integer, PImage>		mapTetrisImg				= new HashMap<Integer, PImage>();
 	private static List<Mattoncino>			listMattonciniGameOver		= new ArrayList<>();
 	// private static SoundFile file;
 	private static int						numRigheAbbattuteTotali;
 	private boolean							gameOver					= false;
+	private ParticleSystem					ps;
 	private Map<MattonciniString, Integer>	statistiche					= null;
 	private PImage							img_stat;
 	private PImage							img_righe					= null;
@@ -587,4 +589,90 @@ public class Tetris extends PApplet
 		this.popMatrix();
 	}
 
+}
+
+class ParticleSystem
+{
+
+	ArrayList<Particle>	particles;
+	PVector				origin;
+	PApplet				pa;
+
+	ParticleSystem(PVector position, PApplet pa)
+	{
+		this.pa = pa;
+		this.origin = position.copy();
+		this.particles = new ArrayList<Particle>();
+	}
+
+	void addParticle()
+	{
+		this.particles.add(new Particle(this.origin, this.pa));
+	}
+
+	void run()
+	{
+		for (int i = this.particles.size() - 1; i >= 0; i--)
+		{
+			Particle p = this.particles.get(i);
+			p.run();
+			if (p.isDead())
+			{
+				this.particles.remove(i);
+			}
+		}
+	}
+}
+
+class Particle
+{
+
+	PVector	position;
+	PVector	velocity;
+	PVector	acceleration;
+	float	lifespan;
+	PApplet	pa;
+
+	Particle(PVector l, PApplet pa)
+	{
+		this.pa = pa;
+		this.acceleration = new PVector(0, 0.01f);
+		this.velocity = new PVector(this.pa.random(-1, 1), this.pa.random(-2, 0));
+		this.position = l.copy();
+		this.lifespan = 255.0f;
+	}
+
+	void run()
+	{
+		this.update();
+		this.display();
+	}
+
+	void update()
+	{
+		this.velocity.add(this.acceleration);
+		this.position.add(this.velocity);
+		this.lifespan -= 1.0;
+	}
+
+	// Method to display
+	void display()
+	{
+		this.pa.stroke(255, this.lifespan);
+		this.pa.fill(255, this.lifespan);
+		this.pa.ellipse(this.position.x, this.position.y, 4, 4);
+	}
+
+	// Is the particle still useful?
+	boolean isDead()
+	{
+		if (this.lifespan < 0.0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
