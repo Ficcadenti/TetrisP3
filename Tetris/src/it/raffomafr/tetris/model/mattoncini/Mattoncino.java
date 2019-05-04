@@ -26,6 +26,8 @@ public abstract class Mattoncino implements Cloneable
 	private int					posy;
 	private int					posxAssoluta;
 	private int					posyAssoluta;
+	private int					larghezzaImg;
+	private int					altezzaImg;
 
 	@Override
 	public Object clone() throws CloneNotSupportedException
@@ -88,11 +90,16 @@ public abstract class Mattoncino implements Cloneable
 	public Mattoncino(MattonciniString mattoncino)
 	{
 		this(mattoncino, true);
+
 	}
 
 	public Mattoncino(MattonciniString mattoncino, boolean flag)
 	{
 		int numeroRotazioniDx;
+
+		// setto altezza e larghezza mattoncino di default 30x30
+		this.setAltezzaImg(Costanti.Sketch.ALTEZZA_CELLA);
+		this.setLarghezzaImg(Costanti.Sketch.LARGHEZZA_CELLA);
 
 		// setto il mattoncino
 		this.mattoncino = mattoncino;
@@ -451,6 +458,26 @@ public abstract class Mattoncino implements Cloneable
 	public void setPosyAssoluta(int posyAssoluta)
 	{
 		this.posyAssoluta = posyAssoluta;
+	}
+
+	public int getLarghezzaImg()
+	{
+		return this.larghezzaImg;
+	}
+
+	public void setLarghezzaImg(int larghezzaImg)
+	{
+		this.larghezzaImg = larghezzaImg;
+	}
+
+	public int getAltezzaImg()
+	{
+		return this.altezzaImg;
+	}
+
+	public void setAltezzaImg(int altezzaImg)
+	{
+		this.altezzaImg = altezzaImg;
 	}
 
 }

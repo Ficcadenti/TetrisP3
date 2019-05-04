@@ -290,8 +290,10 @@ public class Tetris extends PApplet
 				clazz.setPa(this);// passo il riferimento alla PApplet attuale, mi serve per invocare il metodo
 									// loadImage
 				clazz.loadImg(); // carico l'immagine
-				clazz.setPosx(18); // setto la posx
-				clazz.setPosy(5 + (cont * 2)); // setto la posy
+				clazz.setAltezzaImg(20);
+				clazz.setLarghezzaImg(20);
+				clazz.setPosxAssoluta(550); // setto la posx
+				clazz.setPosyAssoluta(220 + (cont * 70)); // setto la posy
 				listMattonciniGameOver.add(clazz); // Aggiungo il mattoncino creato alla lista dei mattoncini che usero in ganeover
 													// per il resoconto
 				cont++;
@@ -409,8 +411,8 @@ public class Tetris extends PApplet
 		for (Mattoncino m : listMattonciniGameOver)
 		{
 			cont++;
-			this.drawMattoncinoNelTavolo(m);
-			this.text(this.statistiche.get(m.getMattoncino()), 700, 320 + (cont * 50));
+			this.drawMattoncinoNelloSkatch(m);
+			this.text(this.statistiche.get(m.getMattoncino()), 700, 180 + (cont * 70));
 
 		}
 	}
@@ -513,13 +515,40 @@ public class Tetris extends PApplet
 
 		for (int y = 0; y < mAltezza; y++)
 		{
-			yPosM = (mattoncino.getPosy() + y) * Costanti.Sketch.ALTEZZA_CELLA;
+			yPosM = (mattoncino.getPosy() + y) * mattoncino.getAltezzaImg();
 			for (int x = 0; x < mLarghezza; x++)
 			{
 				if (mattoncino.getMatrice()[x][y] != 0)
 				{
-					xPosM = (mattoncino.getPosx() + x) * Costanti.Sketch.LARGHEZZA_CELLA;
+					xPosM = (mattoncino.getPosx() + x) * mattoncino.getLarghezzaImg();
 					this.image(mattoncino.getImg(), xPosM, (Costanti.Sketch.ALTEZZA_HEADER) + yPosM);
+				}
+			}
+		}
+
+		this.popMatrix();
+
+	}
+
+	public void drawMattoncinoNelloSkatch(Mattoncino mattoncino)
+	{
+		int xPosM;
+		int yPosM;
+		int mLarghezza = mattoncino.getLarghezza();
+		int mAltezza = mattoncino.getAltezza();
+
+		this.pushMatrix();
+
+		for (int y = 0; y < mAltezza; y++)
+		{
+			yPosM = mattoncino.getPosyAssoluta() + (y * mattoncino.getAltezzaImg());
+			for (int x = 0; x < mLarghezza; x++)
+			{
+				if (mattoncino.getMatrice()[x][y] != 0)
+				{
+					xPosM = mattoncino.getPosxAssoluta() + (x * mattoncino.getLarghezzaImg());
+					mattoncino.getImg().resize(mattoncino.getLarghezzaImg(), mattoncino.getAltezzaImg());
+					this.image(mattoncino.getImg(), xPosM, yPosM);
 				}
 			}
 		}
