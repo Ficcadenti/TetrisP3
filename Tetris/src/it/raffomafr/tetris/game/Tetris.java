@@ -71,11 +71,22 @@ public class Tetris extends PApplet
 		this.strokeWeight(1);
 	}
 
+	public void drawHeader()
+	{
+		this.pushMatrix();
+		this.noStroke();
+		this.fill(0, 0, 0);
+		this.rect(0, 0, Costanti.Sketch.LARGHEZZA + Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER);
+		this.drawProssimoMattoncino(this.prossimoMattoncinoCasuale);
+		this.popMatrix();
+	}
+
 	public void drawFooter()
 	{
 		this.pushMatrix();
+		this.noStroke();
 		this.fill(0, 0, 0);
-		this.rect(0, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.rect(0, (Costanti.Sketch.ALTEZZA_HEADER) + Costanti.Sketch.ALTEZZA, Costanti.Sketch.LARGHEZZA + Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
 		this.popMatrix();
 	}
 
@@ -100,7 +111,6 @@ public class Tetris extends PApplet
 		{
 			mattoncinoInProiezione = (Mattoncino) this.mattoncinoCasuale.clone();
 			mattoncinoInProiezione = mattoncinoInProiezione.calcolaProiezione();
-			// this.drawMattoncino(mattoncinoInProiezione);
 		}
 		catch (CloneNotSupportedException e)
 		{
@@ -113,6 +123,7 @@ public class Tetris extends PApplet
 	public void draw()
 	{
 		GestioneBottoni.getInstance().checkHover();
+		this.drawHeader();
 		this.drawFooter();
 		if (this.gameOver == false)
 		{
@@ -126,7 +137,6 @@ public class Tetris extends PApplet
 				this.drawProiezione(mattoncinoInProiezione);
 			}
 			this.drawMattoncinoNelTavolo(this.mattoncinoCasuale);
-			this.drawProssimoMattoncino(this.prossimoMattoncinoCasuale);
 
 			if ((this.frameCount % this.accellerazione) == 0)
 			{
@@ -230,8 +240,7 @@ public class Tetris extends PApplet
 				clazz.setPosyAssoluta(220 + (cont * 70));
 				listMattonciniGameOver.add(clazz);
 				cont++;
-				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg()); // come erà prima , utilizzata per le immagini dei mattoncini nel tavolo da
-																								// gioco.
+				mapTetrisImg.put(new Integer(clazz.getMattoncino().getTipo()), clazz.getImg());
 			}
 			catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e)
 			{
@@ -277,7 +286,7 @@ public class Tetris extends PApplet
 		this.prossimoMattoncinoCasuale = tetris.generaMattoncino();
 
 		this.imageMode(CORNER);
-		this.drawTavoloDaGioco();
+		// this.drawTavoloDaGioco();
 	}
 
 	private void caricaSound()
@@ -320,11 +329,18 @@ public class Tetris extends PApplet
 
 	public void gameOver()
 	{
+		this.gameOver = true;
+
+		// sfondo grigio
+		this.pushMatrix();
+		this.filter(ERODE);
+		this.popMatrix();
+
+		// disegni il tuo gameover molto bello :)
 		this.pushMatrix();
 		this.fill(0);
 		this.noStroke();
-		this.rect(510, 0, this.width, this.height);
-		this.gameOver = true;
+		this.rect(Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER, Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA);
 		this.image(this.loadImage(ImmaginiGioco.GAMEOVER.getDesc(), ImmaginiGioco.GAMEOVER.getEstensione()), ImmaginiGioco.GAMEOVER.getPosX(), ImmaginiGioco.GAMEOVER.getPosY(), ImmaginiGioco.GAMEOVER.getLarghezza(),
 				ImmaginiGioco.GAMEOVER.getAltezza());
 		this.fill(0);
@@ -505,9 +521,6 @@ public class Tetris extends PApplet
 		int mAltezza = mattoncino.getAltezza();
 
 		this.pushMatrix();
-
-		this.fill(0, 0, 0);
-		this.rect(0, 0, Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER);
 
 		for (int y = 0; y < mAltezza; y++)
 		{

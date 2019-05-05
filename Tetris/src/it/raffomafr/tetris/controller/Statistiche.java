@@ -41,7 +41,7 @@ public class Statistiche
 
 		this.pa.pushMatrix();
 		this.pa.fill(0, 0, 0);
-		this.pa.rect(Costanti.Sketch.LARGHEZZA, 0, Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER + Costanti.Sketch.ALTEZZA + Costanti.Sketch.ALTEZZA_FOOTER);
+		this.pa.rect(Costanti.Sketch.LARGHEZZA, Costanti.Sketch.ALTEZZA_HEADER, Costanti.Statistiche.LARGHEZZA, Costanti.Sketch.ALTEZZA);
 		// this.generaPuntiStatistiche(20);
 		this.pa.fill(255);
 
