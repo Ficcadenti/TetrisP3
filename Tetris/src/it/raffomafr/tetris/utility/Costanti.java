@@ -14,7 +14,7 @@ public class Costanti
 
 	public class Sketch
 	{
-		public static final int	ALTEZZA_HEADER	= 100;
+		public static final int	ALTEZZA_HEADER	= 150;
 		public static final int	ALTEZZA_FOOTER	= 50;
 		public static final int	LARGHEZZA_CELLA	= 30;
 		public static final int	ALTEZZA_CELLA	= 30;
@@ -29,6 +29,12 @@ public class Costanti
 		public static final int	ALTEZZA				= Sketch.ALTEZZA;
 		public static final int	INTERVALLO_BARRETTE	= 50;
 		public static final int	DELTA_BARRETTA		= 10;
+	}
+
+	public class GameOver
+	{
+		public static final int	ALTEZZA_MATTONCINO		= 20;
+		public static final int	LARGHEZZA_MATTONCINO	= 20;
 	}
 
 	public class RigheAbbattute

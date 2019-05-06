@@ -162,7 +162,6 @@ public abstract class Mattoncino implements Cloneable
 					bRet = false;
 					break;
 				}
-
 			}
 		}
 

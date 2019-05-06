@@ -24,6 +24,7 @@ public class TavoloDaGioco
 	private static TavoloDaGioco	istanza	= null;
 	private int						altezza;
 	private int						larghezza;
+	private int						righeBloccate;
 	private int[][]					matrice;
 	private List<Class<?>>			lista;
 	private PApplet					pa;
@@ -37,6 +38,7 @@ public class TavoloDaGioco
 			istanza.altezza = Costanti.TavoloDaGioco.ALTEZZA;
 			istanza.matrice = new int[istanza.larghezza][istanza.altezza];
 			istanza.lista = new ArrayList<>();
+			istanza.righeBloccate = 0;
 			istanza.creaMattoncini();
 		}
 
@@ -97,7 +99,6 @@ public class TavoloDaGioco
 				{
 					sum++;
 				}
-				// sum = sum + this.matrice[x][y];
 			}
 			if (sum == Costanti.TavoloDaGioco.LARGHEZZA_GIOCO)
 			{
@@ -107,6 +108,35 @@ public class TavoloDaGioco
 		}
 
 		return listaRighe;
+	}
+
+	public void inserisciRighePiene()
+	{
+		log.info("inserisciRighePiene()");
+
+		// sposto tutti i mattoncini in alto
+		for (int y = 0; y < (this.altezza - 2); y++)
+		{
+			for (int x = 1; x < (this.larghezza - 1); x++)
+			{
+				this.matrice[x][y] = this.matrice[x][y + 1];
+			}
+		}
+
+		// inserisco il muro
+		int posyMuro = this.calcolaAltezzaMuro();
+		for (int x = 1; x < (this.larghezza - 1); x++)
+		{
+			this.matrice[x][posyMuro - 1] = MattonciniString.BLOCCO.getTipo();
+		}
+
+		// decremento altezza tavolo da gioco
+		this.altezza = this.altezza - 1;
+	}
+
+	private int calcolaAltezzaMuro()
+	{
+		return this.altezza - 1;
 	}
 
 	public int cancellaRighePiene()
@@ -138,6 +168,8 @@ public class TavoloDaGioco
 
 	public void azzeraMatrice()
 	{
+		this.larghezza = Costanti.TavoloDaGioco.LARGHEZZA;
+		this.altezza = Costanti.TavoloDaGioco.ALTEZZA;
 		for (int y = 0; y < this.matrice[0].length; y++)
 		{
 			for (int x = 0; x < this.matrice.length; x++)
@@ -149,6 +181,7 @@ public class TavoloDaGioco
 
 	public void generaLivello(int livello)
 	{
+
 		this.azzeraMatrice();
 		this.generaMuro(livello);
 	}
@@ -237,5 +270,15 @@ public class TavoloDaGioco
 	public void setPa(PApplet pa)
 	{
 		this.pa = pa;
+	}
+
+	public int getRigheBloccate()
+	{
+		return this.righeBloccate;
+	}
+
+	public void setRigheBloccate(int righeBloccate)
+	{
+		this.righeBloccate = righeBloccate;
 	}
 }

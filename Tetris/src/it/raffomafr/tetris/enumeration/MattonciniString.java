@@ -11,7 +11,8 @@ public enum MattonciniString
 	S(6, "011110", 3, 2, "Mattoncino S", Colore.ARANCIONE, "mattoncinoS.jpg"),
 	Z(7, "110011", 3, 2, "Mattoncino Z", Colore.AZZURRO, "mattoncinoZ.jpg"),
 	MURO(8, "1", 1, 1, "MURO", null, "mattoncinoMuro.jpg"),
-	PROIEZIONE(9, "1", 1, 1, "PROIEZIONE", null, "mattoncinoP.jpg");
+	BLOCCO(9, "1", 1, 1, "BLOCCO", null, "mattoncinoBlocco.jpg"),
+	PROIEZIONE(10, "1", 1, 1, "PROIEZIONE", null, "mattoncinoP.jpg");
 
 	private String	stringa;
 	private String	desc;

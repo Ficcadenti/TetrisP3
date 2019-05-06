@@ -52,7 +52,8 @@ public class Statistiche
 			{
 				this.img_stat = (PImage) this.mapTetrisImg.get(m.getTipo()).clone();
 				this.img_stat.resize(this.img_stat.width, this.img_stat.height + (Costanti.Statistiche.DELTA_BARRETTA * this.statistiche.get(m)));
-				this.pa.image(this.img_stat, (Costanti.Sketch.LARGHEZZA - 20) + (Costanti.Statistiche.INTERVALLO_BARRETTE * cont), Costanti.Statistiche.ALTEZZA - (Costanti.Statistiche.DELTA_BARRETTA * this.statistiche.get(m)));
+				this.pa.image(this.img_stat, ((Costanti.Sketch.LARGHEZZA - Costanti.Statistiche.INTERVALLO_BARRETTE) + Costanti.Sketch.LARGHEZZA_CELLA) + (Costanti.Statistiche.INTERVALLO_BARRETTE * cont),
+						((Costanti.Sketch.ALTEZZA_HEADER + Costanti.Statistiche.ALTEZZA) - Costanti.Sketch.ALTEZZA_CELLA) - (Costanti.Statistiche.DELTA_BARRETTA * this.statistiche.get(m)));
 			}
 			catch (CloneNotSupportedException e)
 			{
@@ -69,12 +70,10 @@ public class Statistiche
 		if (p == null)
 		{
 			p = new Integer(1);
-			log.info("nuovo---> " + mattoncinoCasuale.getMattoncino().getDesc() + ":" + p);
 		}
 		else
 		{
 			p = p + 1; // incremento le statistiche
-			log.info("trovato---> " + mattoncinoCasuale.getMattoncino().getDesc() + ":" + p);
 		}
 		this.statistiche.put(mattoncinoCasuale.getMattoncino(), p);
 	}

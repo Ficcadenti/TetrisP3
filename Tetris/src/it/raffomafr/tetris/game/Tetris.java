@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -25,7 +26,7 @@ import processing.core.PImage;
 
 public class Tetris extends PApplet
 {
-
+	private String						clientUUID					= UUID.randomUUID().toString();
 	private Mattoncino					mattoncinoCasuale;
 	private Mattoncino					prossimoMattoncinoCasuale	= null;
 	private int							accellerazione				= Costanti.Sketch.FRAME_LIVELLO_0;
@@ -35,12 +36,12 @@ public class Tetris extends PApplet
 	// private static SoundFile file;
 	private static int					numRigheAbbattuteTotali;
 	private boolean						gameOver					= false;
-
 	private PImage						img_righe					= null;
 
 	public static void main(String[] args)
 	{
 		PApplet.main("it.raffomafr.tetris.game.Tetris");
+		PropertyConfigurator.configure("log4j.properties");
 	}
 
 	public void generaPuntiHeader(int i)
@@ -125,6 +126,7 @@ public class Tetris extends PApplet
 		GestioneBottoni.getInstance().checkHover();
 		this.drawHeader();
 		this.drawFooter();
+
 		if (this.gameOver == false)
 		{
 			boolean bRet = true;
@@ -161,6 +163,8 @@ public class Tetris extends PApplet
 				if (numeroRigheAbbattute > 0)
 				{
 					numRigheAbbattuteTotali += numeroRigheAbbattute;
+					// invia la riga al secondo giocatore
+
 				}
 				bRet = true;
 			}
@@ -234,8 +238,8 @@ public class Tetris extends PApplet
 				Mattoncino clazz = (Mattoncino) constructor.newInstance(false);
 				clazz.setPa(this);
 				clazz.loadImg();
-				clazz.setAltezzaImg(20);
-				clazz.setLarghezzaImg(20);
+				clazz.setAltezzaImg(Costanti.GameOver.ALTEZZA_MATTONCINO);
+				clazz.setLarghezzaImg(Costanti.GameOver.LARGHEZZA_MATTONCINO);
 				clazz.setPosxAssoluta(550);
 				clazz.setPosyAssoluta(220 + (cont * 70));
 				listMattonciniGameOver.add(clazz);
@@ -249,6 +253,7 @@ public class Tetris extends PApplet
 		}
 
 		mapTetrisImg.put(new Integer(MattonciniString.MURO.getTipo()), this.loadImage(MattonciniString.MURO.getNomeImg()));
+		mapTetrisImg.put(new Integer(MattonciniString.BLOCCO.getTipo()), this.loadImage(MattonciniString.BLOCCO.getNomeImg()));
 		mapTetrisImg.put(new Integer(MattonciniString.PROIEZIONE.getTipo()), this.loadImage(MattonciniString.PROIEZIONE.getNomeImg()));
 
 		Statistiche.getInstance().setMapTetrisImg(mapTetrisImg);
@@ -257,7 +262,7 @@ public class Tetris extends PApplet
 	@Override
 	public void setup()
 	{
-		PropertyConfigurator.configure("log4j.properties");
+		log.info("Client UUID = " + this.clientUUID);
 		this.cursor(CROSS);
 		this.textFont(this.createFont("Gugi-Regular.ttf", Costanti.sizeFont, true), Costanti.sizeFont);
 
@@ -302,12 +307,21 @@ public class Tetris extends PApplet
 		this.pausa();
 		{
 			// forzatura del gameover con tasto G
-			final int gameover = this.keyCode;
-			if (gameover == 'G')
+			final int key = this.keyCode;
+			if (key == 'G')
 			{
 				this.gameOver();
 			}
+			if (key == 'I')
+			{
+				if (this.mattoncinoCasuale.getPosy() > 0)
+				{
+					this.mattoncinoCasuale.setPosy(this.mattoncinoCasuale.getPosy() - 1);
+					TavoloDaGioco.getInstance().inserisciRighePiene();
+				}
+			}
 		}
+
 		if (this.keyCode == UP)
 		{
 			this.mattoncinoCasuale.ruota();
@@ -412,22 +426,6 @@ public class Tetris extends PApplet
 		{
 			this.accellerazione = Costanti.Sketch.FRAME_LIVELLO_0;
 		}
-	}
-
-	private void drawGriglia()
-	{
-		this.pushMatrix();
-		this.stroke(100, 100, 100);
-		for (int x = 0; x <= Costanti.Sketch.LARGHEZZA; x++)
-		{
-			this.line(x * Costanti.Sketch.LARGHEZZA_CELLA, 0, x * Costanti.Sketch.LARGHEZZA_CELLA, Costanti.Sketch.ALTEZZA);
-		}
-
-		for (int y = 0; y <= Costanti.Sketch.ALTEZZA; y++)
-		{
-			this.line(0, y * Costanti.Sketch.ALTEZZA_CELLA, Costanti.Sketch.LARGHEZZA, y * Costanti.Sketch.ALTEZZA_CELLA);
-		}
-		this.popMatrix();
 	}
 
 	public void drawProiezione(Mattoncino mattoncino)
