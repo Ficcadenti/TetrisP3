@@ -110,6 +110,11 @@ public class TavoloDaGioco
 		return listaRighe;
 	}
 
+	private int generaBloccoCasuale()
+	{
+
+	}
+
 	public void inserisciRighePiene()
 	{
 		log.info("inserisciRighePiene()");
@@ -123,11 +128,30 @@ public class TavoloDaGioco
 			}
 		}
 
-		// inserisco il muro
+		// inserisco il muro/mattoncini casuali
 		int posyMuro = this.calcolaAltezzaMuro();
 		for (int x = 1; x < (this.larghezza - 1); x++)
 		{
-			this.matrice[x][posyMuro - 1] = MattonciniString.BLOCCO.getTipo();
+			// solo muro
+			// this.matrice[x][posyMuro - 1] = MattonciniString.BLOCCO.getTipo();
+
+			// muro e mattoncini e vuoto
+			// Random random = new Random();
+			// this.matrice[x][posyMuro - 1] = random.nextInt(8);
+
+			// muro e vuoto
+			Random random = new Random();
+			int rnd = random.nextInt(2);
+
+			if (rnd == 0)
+			{
+				this.matrice[x][posyMuro - 1] = MattonciniString.VUOTO.getTipo();
+			}
+			else
+			{
+				this.matrice[x][posyMuro - 1] = MattonciniString.BLOCCO.getTipo();
+			}
+
 		}
 
 		// decremento altezza tavolo da gioco
