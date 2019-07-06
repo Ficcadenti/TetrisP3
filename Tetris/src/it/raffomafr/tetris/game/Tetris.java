@@ -133,33 +133,33 @@ public class Tetris extends PApplet
 		if (this.gameOver == false)
 		{
 
-			String msgInput = this.c.readString();
-			if (msgInput != null)
-			{
-				log.info("Ricevuto dal server: " + msgInput);
-				if (msgInput != null)
-				{
-					String[] listaInput = msgInput.split("::", 2);
-					String serverUUID = listaInput[0];
-
-					if (!serverUUID.equals(this.clientUUID))
-					{
-						int numeroRigheAvversario = Integer.parseInt(listaInput[1]);
-						log.info("Client          : " + serverUUID);
-						log.info("Righe abbattute : " + numeroRigheAvversario);
-
-						for (int i = 0; i < numeroRigheAvversario; i++)
-						{
-							TavoloDaGioco.getInstance().inserisciRighePiene();
-						}
-					}
-					else
-					{
-						log.info("Il messaggio non è per me !!!!!!!");
-					}
-
-				}
-			}
+			// String msgInput = this.c.readString();
+			// if (msgInput != null)
+			// {
+			// log.info("Ricevuto dal server: " + msgInput);
+			// if (msgInput != null)
+			// {
+			// String[] listaInput = msgInput.split("::", 2);
+			// String serverUUID = listaInput[0];
+			//
+			// if (!serverUUID.equals(this.clientUUID))
+			// {
+			// int numeroRigheAvversario = Integer.parseInt(listaInput[1]);
+			// log.info("Client : " + serverUUID);
+			// log.info("Righe abbattute : " + numeroRigheAvversario);
+			//
+			// for (int i = 0; i < numeroRigheAvversario; i++)
+			// {
+			// TavoloDaGioco.getInstance().inserisciRighePiene();
+			// }
+			// }
+			// else
+			// {
+			// log.info("Il messaggio non è per me !!!!!!!");
+			// }
+			//
+			// }
+			// }
 
 			boolean bRet = true;
 
@@ -298,7 +298,8 @@ public class Tetris extends PApplet
 	public void setup()
 	{
 		log.info("Client UUID = " + this.clientUUID);
-		this.c = new Client(this, "127.0.0.1", 12345); // Replace with your server’s IP and port
+		// this.c = new Client(this, "192.168.100.5", 9999); // Replace with your
+		// server’s IP and port
 
 		this.cursor(CROSS);
 		this.textFont(this.createFont("Gugi-Regular.ttf", Costanti.sizeFont, true), Costanti.sizeFont);

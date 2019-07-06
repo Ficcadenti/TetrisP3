@@ -110,11 +110,6 @@ public class TavoloDaGioco
 		return listaRighe;
 	}
 
-	private int generaBloccoCasuale()
-	{
-
-	}
-
 	public void inserisciRighePiene()
 	{
 		log.info("inserisciRighePiene()");
